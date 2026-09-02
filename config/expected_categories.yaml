@@ -1,0 +1,54 @@
+# What evidence a supervisor would normally expect to see (Negative Space, NS-03 / NS-07).
+# Categories are the canonical lowercase names from satsa/schema/enums.py.
+
+# Relative importance of a missing category when computing the weighted missing-category score.
+importance:
+  malware: 1.0
+  brute_force: 0.8
+  lateral_movement: 1.0
+  data_exfil: 1.0
+  phishing: 0.8
+  recon: 0.6
+  dos: 0.5
+  insider: 0.7
+  policy_violation: 0.3
+  config_change: 0.5
+  privilege_escalation: 1.0
+  ot_anomaly: 1.0
+
+# Categories expected for every entity in a sector regardless of asset mix.
+by_sector:
+  power:     [malware, brute_force, lateral_movement, data_exfil, phishing, recon, privilege_escalation, ot_anomaly, config_change]
+  oil_gas:   [malware, brute_force, lateral_movement, data_exfil, phishing, recon, privilege_escalation, ot_anomaly, config_change]
+  telecom:   [malware, brute_force, lateral_movement, data_exfil, phishing, recon, dos, privilege_escalation, config_change]
+  banking:   [malware, brute_force, lateral_movement, data_exfil, phishing, recon, dos, insider, privilege_escalation, policy_violation]
+  transport: [malware, brute_force, lateral_movement, data_exfil, phishing, recon, privilege_escalation, config_change]
+  govt:      [malware, brute_force, lateral_movement, data_exfil, phishing, recon, insider, privilege_escalation, policy_violation]
+  health:    [malware, brute_force, lateral_movement, data_exfil, phishing, recon, insider, privilege_escalation, policy_violation]
+
+# Extra categories expected when the entity declares assets of a given class.
+by_asset_class:
+  SCADA:             [ot_anomaly, config_change]
+  HMI:               [ot_anomaly, config_change]
+  HISTORIAN:         [data_exfil, config_change]
+  DOMAIN_CONTROLLER: [brute_force, privilege_escalation, lateral_movement]
+  DB_SERVER:         [data_exfil, privilege_escalation]
+  WEB_SERVER:        [dos, recon, brute_force]
+  ENDPOINT:          [malware, phishing]
+  NETWORK_DEVICE:    [config_change, recon]
+  FIREWALL:          [config_change, recon, dos]
+  OTHER:             []
+
+# Telemetry sources an asset class is expected to feed (used when an asset row does not
+# declare expected_telemetry_sources explicitly).
+default_telemetry_sources:
+  SCADA:             [ot_ids, syslog]
+  HMI:               [edr, syslog]
+  HISTORIAN:         [edr, db_audit]
+  DOMAIN_CONTROLLER: [windows_security, edr]
+  DB_SERVER:         [db_audit, edr]
+  WEB_SERVER:        [waf, web_access, edr]
+  ENDPOINT:          [edr, av]
+  NETWORK_DEVICE:    [netflow, syslog]
+  FIREWALL:          [firewall_log, syslog]
+  OTHER:             [syslog]

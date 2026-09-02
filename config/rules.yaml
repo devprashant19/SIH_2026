@@ -1,0 +1,170 @@
+# Deterministic rule catalogue parameters. Rule logic lives in satsa/analytics/rules/;
+# this file holds only what a supervisor may tune: enabled flag, thresholds, minimum sample
+# sizes, and the prior weight used in the noisy-OR rule composite.
+# score past threshold = min(1, 0.5 + 0.5 * (value - threshold) / threshold)
+
+version: r1
+
+rules:
+  # ---------------- Execution Gaps ----------------
+  EG-01:
+    name: Acknowledged but not investigated
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-INV
+    capability: Investigation
+    params: { stale_hours: 72, entity_rate_threshold: 0.15, min_n: 30 }
+
+  EG-02:
+    name: Implausibly fast closure
+    enabled: true
+    prior_weight: 0.55
+    control_id: CTRL-INV
+    capability: Investigation
+    params: { rate_threshold_critical: 0.25, rate_threshold_high: 0.35, min_n: 20 }
+
+  EG-03:
+    name: Critical alert closed without escalation
+    enabled: true
+    prior_weight: 0.60
+    control_id: CTRL-ESC
+    capability: Escalation
+    params: { rate_threshold: 0.45, min_n: 10 }
+
+  EG-04:
+    name: Uniform closure times
+    enabled: true
+    prior_weight: 0.35
+    control_id: CTRL-INV
+    capability: Operational Discipline
+    params: { cv_threshold: 0.15, min_n_critical: 15, min_n_high: 30 }
+
+  EG-05:
+    name: Template-driven investigation notes
+    enabled: true
+    prior_weight: 0.50
+    control_id: CTRL-INV
+    capability: Investigation
+    params: { template_score_threshold: 0.80, dup_cluster_share_threshold: 0.50, min_n: 25 }
+
+  EG-06:
+    name: Missing investigation notes
+    enabled: true
+    prior_weight: 0.40
+    control_id: CTRL-INV
+    capability: Governance and Oversight
+    params: { rate_threshold: 0.30, min_n: 20 }
+
+  EG-07:
+    name: Repeat alerts without remediation
+    enabled: true
+    prior_weight: 0.50
+    control_id: CTRL-REM
+    capability: Incident Response
+    params: { repeat_k: 3, repeat_k_tier1: 3, rate_threshold: 0.30, critical_assets_threshold: 3 }
+
+  EG-08:
+    name: Closure-reason collapse (metric gaming)
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-INV
+    capability: Operational Discipline
+    params: { entropy_threshold: 0.35, top_share_threshold: 0.80, min_n_closed: 40, fp_rate_critical_threshold: 0.70, min_n_critical: 10 }
+
+  EG-09:
+    name: Mass or batch closure
+    enabled: true
+    prior_weight: 0.40
+    control_id: CTRL-INV
+    capability: Operational Discipline
+    params: { batch_score_threshold: 0.20, min_n_closed: 50 }
+
+  EG-10:
+    name: Investigated-rate deficit vs global (AACT)
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-DET
+    capability: Threat Detection
+    params: { gap_threshold: 0.20, min_n_category: 10, slope_threshold_per_day: -0.01 }
+
+  EG-11:
+    name: Escalated without incident record
+    enabled: true
+    prior_weight: 0.40
+    control_id: CTRL-IR
+    capability: Incident Response
+    params: { without_record_rate_threshold: 0.25, incident_link_rate_threshold: 0.50, min_n: 5 }
+
+  # ---------------- Negative Space ----------------
+  NS-01:
+    name: Silent critical assets
+    enabled: true
+    prior_weight: 0.60
+    control_id: CTRL-TEL
+    capability: Threat Detection
+    params: { newly_silent_rate_threshold: 0.20, silent_rate_threshold: 0.40, lookback_periods: 5, min_tier1_assets: 3 }
+
+  NS-02:
+    name: Telemetry coverage gap
+    enabled: true
+    prior_weight: 0.55
+    control_id: CTRL-TEL
+    capability: Threat Detection
+    params: { coverage_gap_tier1_threshold: 0.25, source_dropout_threshold: 1, min_assets_declaring_dropped_source: 3, min_expected_alerts_dropped_source: 5 }
+
+  NS-03:
+    name: Expected alert category absent
+    enabled: true
+    prior_weight: 0.50
+    control_id: CTRL-DET
+    capability: Threat Detection
+    params: { min_missing: 2, weighted_score_threshold: 0.15, peer_share_expected: 0.60 }
+
+  NS-04:
+    name: Alert volume below peer expectation
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-TEL
+    capability: Cyber Resilience
+    params: { sigma_threshold: 1.2, min_predicted: 20 }
+
+  NS-05:
+    name: Unexpected drop versus own history
+    enabled: true
+    prior_weight: 0.40
+    control_id: CTRL-TEL
+    capability: Cyber Resilience
+    params: { delta_pct_threshold: -0.40, min_n_prev: 50, z_self_threshold: -2.0, min_delta_for_z: -0.15 }
+
+  NS-06:
+    name: Empty or broken submission
+    enabled: true
+    prior_weight: 0.50
+    control_id: CTRL-DATA
+    capability: Governance and Oversight
+    params: { val_err_rate_threshold: 0.10, missing_notes_rate_threshold: 0.30, unknown_asset_rate_threshold: 0.20 }
+
+  NS-07:
+    name: Monitoring blind spot by asset class
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-TEL
+    capability: Threat Detection
+    params: { ratio_to_peer_threshold: 0.20, min_assets_in_class: 3, min_peer_median: 2.0 }
+
+  NS-08:
+    name: Critical-asset under-monitoring
+    enabled: true
+    prior_weight: 0.45
+    control_id: CTRL-TEL
+    capability: Security Operations
+    params: { criticality_volume_ratio_threshold: 0.50, min_tier1_assets: 3 }
+
+controls:
+  CTRL-DET: Threat detection coverage and tuning
+  CTRL-INV: Investigation quality and discipline
+  CTRL-ESC: Escalation process
+  CTRL-IR: Incident response linkage
+  CTRL-TEL: Telemetry and monitoring coverage
+  CTRL-REM: Remediation tracking
+  CTRL-DATA: Reporting and data integrity

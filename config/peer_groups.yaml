@@ -1,0 +1,23 @@
+# Peer grouping for benchmarking and z-scores.
+# An entity is compared against level-1 peers first; if the group is too small the
+# comparison falls back to the next level and `peer_level` is recorded on the feature row.
+
+min_group_size: 4
+
+levels:
+  - id: 1
+    name: sector_and_size
+    group_by: [sector, size_band]
+  - id: 2
+    name: sector
+    group_by: [sector]
+  - id: 3
+    name: global
+    group_by: []
+
+# Robust z-score: (value - median) / (1.4826 * MAD). If MAD is zero, IQR / 1.349 is used;
+# if that is also zero the feature is flagged DEGENERATE and z = 0.
+robust_z:
+  clip: 5.0
+  mad_scale: 1.4826
+  iqr_scale: 1.349

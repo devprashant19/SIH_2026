@@ -1,0 +1,65 @@
+# Supervisory Risk Indicator (SRI) scorecard.
+# SRI = sum over dimensions of weight * dimension_score, each dimension in [0, 100].
+# Dimension weights MUST sum to 1.0; sub-indicator weights within a dimension MUST sum to 1.0.
+# `source` dimensions take a module probability directly; `subs` dimensions are built from
+# peer-percentile ranks of features in the risky direction (see features/registry.py for direction).
+# `capabilities` maps each dimension onto the PS 26157 capability areas for the capability-lens heatmap.
+
+bands:
+  LOW: [0, 25]
+  ELEVATED: [25, 50]
+  HIGH: [50, 75]
+  CRITICAL: [75, 100]
+
+dimensions:
+  execution_gap:
+    weight: 0.30
+    source: module_a_probability
+    label: Execution Gap
+    capabilities: [Investigation, Operational Discipline]
+
+  negative_space:
+    weight: 0.25
+    source: module_b_probability
+    label: Negative Space
+    capabilities: [Threat Detection, Cyber Resilience]
+
+  escalation_discipline:
+    weight: 0.15
+    label: Escalation Discipline
+    capabilities: [Escalation, Incident Response]
+    subs:
+      escalation_ratio_critical: 0.35
+      critical_closed_no_escalation_rate: 0.35
+      escalation_latency_median: 0.15
+      incident_link_rate: 0.15
+
+  investigation_quality:
+    weight: 0.15
+    label: Investigation Quality
+    capabilities: [Investigation, Security Operations]
+    subs:
+      note_template_score: 0.30
+      closure_reason_entropy: 0.20
+      note_missing_rate: 0.20
+      unknown_closure_rate: 0.15
+      ttc_median_critical: 0.15
+
+  data_integrity:
+    weight: 0.10
+    label: Data Integrity
+    capabilities: [Governance and Oversight]
+    subs:
+      val_err_rate: 0.40
+      val_warn_rate: 0.30
+      unknown_asset_alert_rate: 0.30
+
+  trend_penalty:
+    weight: 0.05
+    source: trend_penalty
+    label: Worsening Trend
+    capabilities: [Cyber Resilience]
+    # trend_penalty = clip(sri_delta_prev, 0, 20) * 5  -> 0..100
+
+# Weight of a sub-indicator flagged LOW_N or DEGENERATE is redistributed across the others;
+# SRI confidence = 1 - (share of sub-indicators that were redistributed).

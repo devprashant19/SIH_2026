@@ -1,0 +1,74 @@
+# SAT-SA master configuration. Every value here is hashed into audit_runs.config_hash.
+app:
+  name: SAT-SA
+  seed: 42
+  environment: dev
+
+paths:
+  data_dir: data
+  db_path: data/satsa.duckdb
+  incoming_dir: data/incoming
+  processed_dir: data/processed
+  synthetic_dir: data/synthetic
+  ground_truth_dir: data/ground_truth
+  models_dir: models
+  reports_dir: reports
+  logs_dir: logs
+  dashboard_dist: dashboard/dist
+
+pipeline:
+  explain_timeout_s: 120            # EXPLAIN stage budget before falling back to z-score attributions
+  review_budget_per_entity: 25      # alert samples per entity in the manual review queue
+  module_a_alpha: 0.6               # weight of the rule layer in the geometric noisy-OR combination
+  ml_weights:                       # ensemble weights, renormalised over the detectors that ran
+    isolation_forest: 0.4
+    lof: 0.3
+    hdbscan: 0.3
+  min_rows_hdbscan: 15
+  min_rows_lof: 5
+  min_rows_alert_if_per_entity: 200
+  negative_space_weights:           # noisy-OR prior weights per Module B detector
+    volume: 0.5
+    categories: 0.5
+    coverage: 0.6
+    silent_assets: 0.7
+    records: 0.4
+    low_activity: 0.5
+  min_labels_for_calibration: 20
+  min_labels_for_recalibration: 30
+
+features:
+  fast_close_minutes:               # closure faster than this is "implausibly fast" for the severity
+    CRITICAL: 15
+    HIGH: 10
+    MEDIUM: 5
+  ack_stale_hours: 72               # acknowledged with no further action after this = EG-01
+  batch_window_minutes: 10          # window for mass-closure detection
+  template_cosine_threshold: 0.92   # note near-duplicate threshold (alert level)
+  dup_cluster_cosine: 0.90
+  dup_cluster_min_neighbours: 5
+  min_note_chars: 20
+  tfidf_global_fit_below_n: 200
+  max_notes_for_similarity: 5000
+
+impact_weights:                     # scales entity priority by how much a weakness matters
+  default: 1.0
+  sector:
+    power: 1.3
+    oil_gas: 1.2
+    telecom: 1.2
+    banking: 1.2
+    transport: 1.0
+    govt: 0.9
+    health: 1.0
+  size_band:
+    S: 0.8
+    M: 0.9
+    L: 1.0
+    XL: 1.2
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  cors_origins:
+    - http://localhost:5173         # Vite dev server only; the production bundle is same-origin

@@ -1,0 +1,23 @@
+# Cost-sensitive decision thresholds (Module D).
+# t* = C_FP / (C_FP + C_FN). Missing a real weakness (C_FN) is deliberately costed higher than
+# sending a healthy entity for manual review (C_FP), which pushes t* down and favours recall.
+# Findings with p inside [t* - band_halfwidth, t* + band_halfwidth] are never auto-decided;
+# they go to the review queue as "Uncertain - Recommend Review".
+
+band_halfwidth: 0.10
+
+classes:
+  execution_gap:
+    C_FP: 1.0
+    C_FN: 4.0          # t* = 0.20
+  negative_space:
+    C_FP: 1.0
+    C_FN: 3.0          # t* = 0.25
+  alert_sample:
+    C_FP: 1.0
+    C_FN: 2.0          # t* = 0.333
+    band_halfwidth: 0.08
+
+default:
+  C_FP: 1.0
+  C_FN: 3.0
