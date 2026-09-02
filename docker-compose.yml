@@ -1,0 +1,18 @@
+services:
+  satsa:
+    build: .
+    image: satsa:local
+    container_name: satsa
+    ports:
+      - "8000:8000"
+    environment:
+      SATSA_CONFIG_DIR: /app/config
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+    # No external network needed at runtime; uncomment to prove it during the demo.
+    # network_mode: none
+    restart: unless-stopped
