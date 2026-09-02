@@ -30,7 +30,7 @@ CSE submissions (CSV / JSON / SQLite)  ──►  data/incoming/
 │             robust peer z-scores and percentiles                            │
 │ analytics   A Execution Gap  : 11 rules + IsolationForest/LOF/HDBSCAN       │
 │                                + isotonic calibration + geometric noisy-OR  │
-│             B Negative Space : 8 deterministic detectors                     │
+│             B Negative Space : 8 rules over 6 deterministic detectors        │
 │             C Benchmarking   : peer baselines + SRI scorecard                │
 │             D Prioritisation : t* = C_FP/(C_FP+C_FN), uncertainty band,      │
 │                                entity / control / alert-sample ranking       │
@@ -53,7 +53,7 @@ dashboard (React, bundled locally, no external asset)   ── one Docker image
    a CSE that cannot submit clean data is itself supervisory evidence, feeding the Data
    Integrity dimension and rule NS-06. Re-submitting an identical file is a no-op; a changed
    file supersedes the previous one and the original stays archived by hash.
-2. **Features.** About seventy features per entity-period, each carrying its sample size and
+2. **Features.** 84 features per entity-period, each carrying its sample size and
    a support flag. Thin evidence is never silently treated as a signal. Every feature is then
    compared with a peer group of the same sector and size band, falling back to a wider group
    when the sector is too small, using a median and MAD so a single outlier cannot move the
@@ -89,7 +89,7 @@ dashboard (React, bundled locally, no external asset)   ── one Docker image
 | Question | Answer |
 |---|---|
 | Architecture | IsolationForest (300 trees) and Local Outlier Factor over about fifty entity-period features, optionally HDBSCAN for a density baseline; a second IsolationForest at alert level; isotonic regression for calibration; Huber regression for expected alert volume; TF-IDF with nearest-neighbour cosine for note templating. |
-| Hardware | CPU only. Reference: 4 vCPU, 8 GB RAM, 20 GB disk. Twenty thousand alerts across six periods complete in about two minutes. No GPU at any point. |
+| Hardware | CPU only, no GPU. Measured: 14,704 alerts across eight entities and six periods complete in 72 seconds at 0.33 GB peak. Larger volumes are untested. |
 | Offline training | `satsa train --periods ... --promote` reads only the local database. Artifacts are written to `models/<name>/<version>/` with a metadata file recording hyperparameters, library versions and the training data hash. |
 | Inference | The pipeline loads active models, never fits during scoring, and refuses to run if a model was trained against a different feature list. |
 | Update mechanism | New versions are registered but inactive until promoted. Artifacts move between air-gapped hosts as a hashed tarball. Supervisor feedback drives recalibration, which produces a new calibrator version and bounded threshold suggestions, again inactive until promoted. |
@@ -117,9 +117,9 @@ is the whole installation. DuckDB is embedded, so there is no database server. T
 be built with networking disabled once dependency wheels are vendored, and the container
 needs no network at runtime.
 
-Storage grows roughly linearly with submissions: the demonstration dataset of about fifteen
-thousand alerts across eight entities and six periods occupies under one hundred megabytes
-including models and archived source files.
+Storage on the demonstration profile: a 14 MB database, 8.3 MB of archived source files and
+3.2 MB of model artifacts, for 14,704 alerts across eight entities and six periods. Growth
+beyond this profile has not been measured.
 
 ## 7. Validation
 

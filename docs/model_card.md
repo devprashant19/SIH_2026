@@ -58,10 +58,11 @@ Investigation notes are used only for similarity and length statistics, computed
 
 ## Operating requirements
 
-- CPU only, 4 vCPU and 8 GB RAM is sufficient for the volumes described; no GPU.
+- CPU only, no GPU. Measured at 14,704 alerts across eight entities and six periods: 72
+  seconds end to end, 0.33 GB peak resident memory, on one laptop core.
 - One Docker image, no database server, no network at runtime.
-- A scoring run over roughly fifteen thousand alerts across eight entities takes a few seconds
-  per period; training takes under a minute.
+- A scoring run takes about five seconds per period at that volume; training takes twelve
+  seconds. Behaviour beyond this profile is untested and no larger figure is claimed.
 - Retraining is manual and explicit. New model versions are registered inactive and become
   active only when promoted.
 
