@@ -1,0 +1,69 @@
+# Default column mapping: canonical name -> accepted source column names (case-insensitive).
+# Add a new file per SIEM export format (splunk_export.yaml, qradar_export.yaml, ...) and pass
+# `--mapping <name>` to `satsa ingest`. Unmapped source columns are reported, not dropped.
+
+source: generic_csv
+timezone: Asia/Kolkata
+timestamp_format: null          # null = auto-detect (ISO-8601 and common variants)
+
+tables:
+  alerts:
+    columns:
+      alert_id:              [alert_id, id, event_id, alertid, alert id, incident_number]
+      timestamp:             [timestamp, ts, time, _time, created_at, alert_time, detected_at, event_time]
+      severity:              [severity, sev, urgency, priority, risk_level]
+      category:              [category, alert_category, rule_category, alert_type, type, tactic]
+      asset_id:              [asset_id, asset, host_id, device_id, dest_host, hostname]
+      source_system:         [source_system, source, log_source, sourcetype, sensor]
+      analyst_id:            [analyst_id, analyst, owner, assignee, assigned_to]
+      analyst_action:        [analyst_action, action, status, state, workflow_status]
+      acknowledged_at:       [acknowledged_at, ack_time, acknowledged, assigned_at]
+      investigated_at:       [investigated_at, investigation_started_at]
+      closed_at:             [closed_at, close_time, resolved_at, closed, resolution_time]
+      time_to_close_min:     [time_to_close_min, ttc_min, time_to_close, resolution_minutes]
+      escalation_flag:       [escalation_flag, escalated, is_escalated]
+      escalated_at:          [escalated_at, escalation_time]
+      closure_reason:        [closure_reason, disposition, resolution, close_reason, outcome]
+      investigation_notes:   [investigation_notes, notes, comments, analyst_notes, comment]
+      root_cause_flag:       [root_cause_flag, root_cause_identified, rca_done]
+      remediation_ticket_id: [remediation_ticket_id, ticket_id, ticket, change_ticket]
+      rule_name:             [rule_name, rule, use_case, detection_rule, search_name]
+    severity_map: {}          # source value -> canonical, applied before the built-in aliases
+    category_map: {}
+    action_map: {}
+    closure_map: {}
+
+  assets:
+    columns:
+      asset_id:                   [asset_id, id, host_id, hostname]
+      criticality_tier:           [criticality_tier, criticality, tier, business_criticality]
+      asset_class:                [asset_class, class, asset_type, type]
+      expected_telemetry_sources: [expected_telemetry_sources, telemetry_sources, sources, log_sources]
+      hostname:                   [hostname, host, name]
+
+  entities:
+    columns:
+      entity_id:              [entity_id, id]
+      name:                   [name, entity_name]
+      sector:                 [sector]
+      size_band:              [size_band, size]
+      documented_soc_tier:    [documented_soc_tier, soc_tier]
+      documented_asset_count: [documented_asset_count, asset_count]
+
+  escalations:
+    columns:
+      escalation_id:         [escalation_id, id]
+      alert_id:              [alert_id]
+      raised_at:             [raised_at, timestamp, created_at]
+      acknowledged_by_ir_at: [acknowledged_by_ir_at, ir_ack_at]
+      incident_id:           [incident_id]
+      outcome:               [outcome, result]
+
+  incidents:
+    columns:
+      incident_id:      [incident_id, id]
+      opened_at:        [opened_at, created_at]
+      closed_at:        [closed_at, resolved_at]
+      severity:         [severity]
+      root_cause:       [root_cause]
+      linked_alert_ids: [linked_alert_ids, alert_ids]
