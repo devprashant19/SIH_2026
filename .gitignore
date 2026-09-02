@@ -19,8 +19,8 @@ data/processed/*
 data/synthetic/*
 data/ground_truth/*
 !data/**/.gitkeep
-models/*/
-!models/registry.json
+models/*
+!models/.gitkeep
 reports/*
 !reports/.gitkeep
 logs/*
