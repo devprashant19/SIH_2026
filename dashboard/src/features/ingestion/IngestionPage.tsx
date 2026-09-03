@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { usePeriods, usePipelineStatus, useRunPipelineMutation, useSubmissions, useUploadMutation, useEntities } from "@/api/hooks";
 import { FilterBar } from "@/components/data/FilterBar";
@@ -171,8 +171,8 @@ export function IngestionPage() {
                   const rows = s.validation?.n_rows || 1;
                   const open = expanded === s.submission_id;
                   return (
-                    <>
-                      <tr key={s.submission_id} className="cursor-pointer border-b border-border hover:bg-surface" onClick={() => setExpanded(open ? null : s.submission_id)}>
+                    <Fragment key={s.submission_id}>
+                      <tr className="cursor-pointer border-b border-border hover:bg-surface" onClick={() => setExpanded(open ? null : s.submission_id)}>
                         <td className="px-2 py-1.5 font-medium">{s.entity_id}</td>
                         <td className="px-2 py-1.5">{s.submission_period}</td>
                         <td className="px-2 py-1.5">{s.source_format}</td>
@@ -184,7 +184,7 @@ export function IngestionPage() {
                         <td className="px-2 py-1.5 text-xs text-muted">{fmtDateTime(s.received_at)}</td>
                       </tr>
                       {open && s.validation && (
-                        <tr key={`${s.submission_id}-detail`}>
+                        <tr>
                           <td colSpan={9} className="bg-surface px-3 py-2 text-xs">
                             <p className="font-medium">Validation checks triggered</p>
                             <ul className="mt-1 grid gap-1 md:grid-cols-3">
@@ -202,7 +202,7 @@ export function IngestionPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
