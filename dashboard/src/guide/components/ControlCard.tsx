@@ -33,6 +33,11 @@ export function ControlCard({
   return (
     <li
       id={`guide-${anchor}`}
+      // Read by dashboard/scripts/check_guide.py, which uses the rendered reference page as
+      // the model rather than parsing TypeScript from Python.
+      data-anchor={anchor}
+      data-availability={c.availability ?? "always"}
+      data-in-dom={c.undocumentedInDom ? "no" : "yes"}
       tabIndex={-1}
       className={cn(
         "rounded-md border border-border p-3",
