@@ -159,17 +159,26 @@ node scripts/check-offline.mjs      # fails if the bundle references any externa
 Set the period selector at the top to **2026-06** and start on Portfolio. Every figure
 below is what that period actually shows.
 
+> **The tool also explains itself.** Everything in this part is available inside the running
+> application, next to the controls it describes. Press `Shift` + `/` on any screen for a panel
+> covering the controls in front of you, open **How this works** in the navigation for the full
+> searchable reference, or take the nine-step guided tour. This document is the version you can
+> read without starting the server. See [2.15](#215-the-in-app-guide).
+
 ## 2.1 The shell
 
 Present on every screen:
 
-- **Navigation rail**, ten routes, collapsible with the `«` button. A skip link precedes it
-  for keyboard users.
+- **Navigation rail**, eleven routes, collapsible with the `«` button. A skip link precedes
+  it for keyboard users. The last route, **How this works**, is the guide to the other ten.
 - **Period selector**, top left. It writes to the URL as `?period=2026-06`, so every view is
   deep-linkable and the browser back button works properly.
 - **Provenance chip**, top right: `v0.1.0 · code e65f0806 · config 677c7fee · last run …`.
   Click it to jump to the audit log. This is the answer to "which version produced what I am
   looking at", visible without asking.
+- **Help button** (`?`), top right beside the provenance chip, or `Shift` + `/` from
+  anywhere outside a text field. Opens a panel describing every control on the screen you are
+  currently looking at.
 - **Footer note**: *Supervisory analytics aid. Findings are indicators for examiner review,
   not conclusions.* Deliberately always on screen.
 
@@ -497,3 +506,46 @@ reproducible and audited.
 
 Claiming an accuracy number here would be the one thing that undermines everything else on
 these screens.
+
+---
+
+## 2.15 The in-app guide
+
+![The guide](screenshots/guide.png)
+
+Everything in Part 2 is also inside the application, beside the controls it describes. There
+are three ways in.
+
+**The help panel.** Press `Shift` + `/` on any screen, or click the `?` beside the provenance
+chip. The panel lists every control on the screen you are looking at, with what it does, what
+it demonstrates, which URL parameter it writes, and a **Show me** button that dims the screen
+and points at it. It changes as you navigate. The guard on the shortcut means typing `?` in a
+comment box or a weight field does nothing, as it should.
+
+![The help panel](screenshots/help.png)
+
+**The reference.** **How this works** in the navigation, or `/guide`, describes all 98
+controls in one searchable page. Filter by screen, by kind of control, or by **Watch out for
+these**, which collects the six behaviours that surprise people: the period being global and
+sticky, filters persisting between screens because they live in the address bar, a re-uploaded
+file being a deliberate no-op, an unchanged run being skipped rather than repeated, saving the
+configuration not changing any result until you re-run, and the feedback shortcuts being
+bar-wide rather than per button. The page closes with the twelve ideas the screens assume:
+the risk indicator, the threshold, the uncertainty band, peer groups, negative space,
+calibration, provenance and the rest.
+
+**The guided tour.** From the reference page or the help panel. Nine steps across three
+screens, following the drill-down the tool is built around: the period selector, the two
+heatmap lenses, the uncertain count, the ranking, an entity's scorecard arithmetic, a
+finding's threshold line, the raw records behind it, the examiner's decision, and the
+provenance chip. It navigates for you, it keeps the selected period throughout, and its
+position lives in the address bar as `?tour=onboarding.4`, so a tour link opens at that step
+and a reload resumes where you were. Escape ends it. Nothing ever starts on its own; a first
+visit gets one dismissable toast offering it.
+
+**Why it cannot go stale.** One content model in `dashboard/src/guide/content.ts` drives all
+three surfaces, and each control it describes is bound to a real element by a `data-guide`
+attribute. A test parses the source and reconciles the two in both directions: an attribute
+with no description fails, a description with no attribute fails, and any interactive element
+that is neither described nor listed in `dashboard/src/guide/exempt.ts` with a written reason
+fails too. Renaming a URL parameter fails. Adding a button fails until you say what it is for.

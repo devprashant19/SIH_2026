@@ -35,6 +35,8 @@ SHOTS: list[tuple[str, str, str]] = [
     ("config", f"/config?period={PERIOD}", "Weights, and the threshold derived from the cost of being wrong"),
     ("audit", f"/audit?period={PERIOD}", "The hash-chained run log"),
     ("reports", f"/reports?period={PERIOD}", "PDF and CSV export, stamped with provenance"),
+    ("guide", "/guide", "The in-app guide: every control, what it does and what it demonstrates"),
+    ("help", "", "The help panel, opened with Shift+/ on any screen"),  # opened, not a bare URL
 ]
 
 
@@ -70,6 +72,15 @@ def main() -> int:
         page.screenshot(path=OUT / "records.png")
         written.append("records")
         print("  records.png")
+
+        # The help panel is a state, not a URL. Shift+/ opens it for whatever screen you are on.
+        page.goto(f"{BASE}/portfolio?period={PERIOD}", wait_until="networkidle")
+        page.wait_for_timeout(1000)
+        page.keyboard.press("Shift+Slash")
+        page.wait_for_timeout(800)
+        page.screenshot(path=OUT / "help.png")
+        written.append("help")
+        print("  help.png")
 
         browser.close()
     print(f"\n{len(written)} screenshots in {OUT}")

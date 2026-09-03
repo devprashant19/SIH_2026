@@ -113,14 +113,21 @@ Built against the approved implementation plan. Gaps are tracked honestly in
 
 ## The screens
 
-Ten routes. The dashboard is bundled locally, served by the API from the same origin, and
+Eleven routes, the eleventh being the guide to the other ten. The dashboard is bundled locally, served by the API from the same origin, and
 references no external host; `dashboard/scripts/check-offline.mjs` fails the build if it
 ever does.
 
 `dashboard/scripts/screenshots.py` regenerates every image below by driving the built UI in
 a real browser against the running application, so none of them can drift from what it
-actually renders. A step-by-step tour of every feature is in
-[`docs/walkthrough.md`](docs/walkthrough.md).
+actually renders.
+
+**The tool explains itself.** `/guide` describes all 98 controls: what each one does when you
+use it, and what supervisory idea it demonstrates. Pressing `Shift` + `/` on any screen opens
+the same explanation for whatever you are looking at, and a nine-step guided tour walks the
+drill-down from the portfolio ranking to the alerts behind one finding. A test reconciles
+every description against the running interface in both directions, so a control cannot be
+renamed, or added, without the guide failing the build. There is a written version in
+[`docs/walkthrough.md`](docs/walkthrough.md) as well.
 
 | | |
 |---|---|
@@ -132,6 +139,8 @@ actually renders. A step-by-step tour of every feature is in
 | **Negative space.** Expected evidence that is absent, hatched and labelled `ABS`. Click a cell for the three reasons it was expected. | **Configuration.** `t*` recomputes live as you change the cost of being wrong, and the impact is previewed before anything is saved. |
 | ![Audit](docs/screenshots/audit.png) | ![Ingestion](docs/screenshots/ingestion.png) |
 | **Audit.** 55 hash-chained runs, verifiable from the page. | **Ingestion.** Validation counts down to the individual check, because dirty submissions are themselves a finding. |
+| ![Guide](docs/screenshots/guide.png) | ![Help panel](docs/screenshots/help.png) |
+| **Guide.** Every control in the tool, searchable, with the pitfalls collected in one place. | **Help panel.** `Shift` + `/` on any screen, describing the controls in front of you, each with a Show me that points at it. |
 
 | Route | What it shows |
 |---|---|
@@ -145,6 +154,7 @@ actually renders. A step-by-step tour of every feature is in
 | `/ingestion` | Upload, per-submission validation counts down to the check level, and the pipeline stage log. |
 | `/config` | The weights, and the costs with `t* = C_FP / (C_FP + C_FN)` recomputing live as you change them. Preview the effect on every entity before saving. |
 | `/audit` and `/reports` | The hash-chained run log with a verify button, the model registry, and PDF or CSV export. |
+| `/guide` | Every control in the tool: what it does, what it demonstrates, which URL parameter it writes, and what surprises people. Plus the twelve ideas the screens assume. |
 
 The path from portfolio to raw records is three clicks: heatmap cell, finding row, records
 tab.

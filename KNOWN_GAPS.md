@@ -104,12 +104,14 @@ feature building.
 
 ---
 
-## 7. No frontend unit tests, and no accessibility audit
+## 7. Thin frontend test coverage, and no accessibility audit
 
-**What is wrong.** The dashboard has no Vitest tests despite Vitest and Testing Library being
-configured. The accessibility work was designed in, colour is never the only cue, every chart
-carries a hidden data table, focus rings are preserved, but it has never been audited with a
-tool.
+**What is wrong.** The dashboard has 22 Vitest tests, all of them about the in-app guide: the
+drift test that reconciles every described control against the running interface, the popover
+placement arithmetic, the Escape layer stack, and a render test for the reference page. There
+is still no render test for any of the eleven supervisory screens. The accessibility work was
+designed in, colour is never the only cue, every chart carries a hidden data table, focus rings
+are preserved, but it has never been audited with a tool.
 
 **What has since been done.** All eleven routes are loaded in a real browser and checked for
 console errors, failed requests and rendered content, and the three-click drill-down is
@@ -119,7 +121,8 @@ heading "Trend". `dashboard/scripts/screenshots.py` regenerates every README ima
 running application.
 
 **Why the rest still matters.** A browser smoke pass is not a unit test suite; it catches
-crashes, not wrong values. An axe pass would replace assertion with measurement.
+crashes, not wrong values. The guide tests prove the guide is honest, not that the analytics
+screens render the right numbers. An axe pass would replace assertion with measurement.
 
 **The fix.** Vitest render tests per route against mocked responses, and axe on each route.
 
