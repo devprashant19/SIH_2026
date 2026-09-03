@@ -5,6 +5,7 @@ import { FilterBar } from "@/components/data/FilterBar";
 import { SectorPicker } from "@/components/data/Pickers";
 import { Button, Card, QueryBoundary } from "@/components/ui/primitives";
 import { cn } from "@/lib/cn";
+import { guide } from "@/guide/model";
 import { fmt1 } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 import type { CoverageStatus } from "@/api/types";
@@ -16,20 +17,15 @@ const CELL: Record<CoverageStatus, { cls: string; text: string; title: string }>
   na: { cls: "bg-surface text-muted", text: "–", title: "not expected for this entity" },
 };
 
-const DIMENSIONS = [
-  { key: "category", label: "Alert categories" },
-  { key: "asset_class", label: "Asset classes" },
-  { key: "source", label: "Telemetry sources" },
-];
-
 export function CoveragePage() {
   const [period] = usePeriodParam();
   const [dimension, setDimension] = useSearchParamState("dimension", "category");
   const [sector] = useSearchParamState("sector", "");
   const [cell, setCell] = useState<{ entity: string; column: string } | null>(null);
   const p = periodOrUndefined(period);
-  const coverage = useCoverage(p, dimension || "category", sector || undefined);
-  const detail = useCoverageCell(cell?.entity, cell?.column, p, dimension || "category");
+  const dim = dimension || "category";
+  const coverage = useCoverage(p, dim, sector || undefined);
+  const detail = useCoverageCell(cell?.entity, cell?.column, p, dim);
 
   return (
     <div className="space-y-4">
@@ -38,17 +34,22 @@ export function CoveragePage() {
           <h1 className="text-xl font-semibold">Negative space</h1>
           <p className="text-sm text-muted">Evidence a supervisor would expect to see and does not. Absent cells are hatched and labelled, never colour alone.</p>
         </div>
+        {/* Written out rather than mapped so each button carries a literal guide anchor. */}
         <FilterBar>
-          {DIMENSIONS.map((d) => (
-            <Button key={d.key} variant={(dimension || "category") === d.key ? "primary" : "default"} onClick={() => setDimension(d.key)}>
-              {d.label}
-            </Button>
-          ))}
+          <Button variant={dim === "category" ? "primary" : "default"} onClick={() => setDimension("category")} {...guide("coverage.dimension-category")}>
+            Alert categories
+          </Button>
+          <Button variant={dim === "asset_class" ? "primary" : "default"} onClick={() => setDimension("asset_class")} {...guide("coverage.dimension-asset")}>
+            Asset classes
+          </Button>
+          <Button variant={dim === "source" ? "primary" : "default"} onClick={() => setDimension("source")} {...guide("coverage.dimension-source")}>
+            Telemetry sources
+          </Button>
           <SectorPicker />
         </FilterBar>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3 text-xs">
+      <div className="flex flex-wrap items-center gap-3 text-xs" {...guide("coverage.legend")}>
         {(Object.keys(CELL) as CoverageStatus[]).map((s) => (
           <span key={s} className="inline-flex items-center gap-1">
             <span className={cn("inline-block rounded-sm px-1.5 py-0.5", CELL[s].cls)}>{CELL[s].text}</span>
@@ -61,7 +62,7 @@ export function CoveragePage() {
         <QueryBoundary query={coverage} rows={8}>
           {(m) =>
             m.rows.length ? (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" {...guide("coverage.matrix")}>
                 <table className="w-full text-sm">
                   <caption className="sr-only">Coverage of expected {m.dimension} per entity for {m.period}</caption>
                   <thead>
@@ -76,7 +77,7 @@ export function CoveragePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {m.rows.map((r) => (
+                    {m.rows.map((r, ri) => (
                       <tr key={r.entity_id} className="border-b border-border">
                         <th scope="row" className="whitespace-nowrap px-2 py-1 text-left font-normal">
                           <Link to={{ pathname: `/entities/${r.entity_id}`, search: `?period=${period}` }} className="text-accent hover:underline">
@@ -88,6 +89,7 @@ export function CoveragePage() {
                           <td key={m.columns[i]} className="px-0.5 py-0.5">
                             <button
                               type="button"
+                              data-guide={ri === 0 && i === 0 ? "coverage.matrix-cell" : undefined}
                               onClick={() => setCell({ entity: r.entity_id, column: m.columns[i] })}
                               title={`${r.entity_id} · ${m.columns[i]}: ${CELL[c.status].title}${c.count != null ? ` (${fmt1(c.count)} observed, peer median ${fmt1(c.peer_median)})` : ""}`}
                               className={cn("w-full rounded-sm px-1.5 py-1 text-center text-xs", CELL[c.status].cls)}

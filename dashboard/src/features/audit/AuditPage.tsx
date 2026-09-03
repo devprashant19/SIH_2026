@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuditRun, useAuditRuns, useModels } from "@/api/hooks";
 import { endpoints } from "@/api/endpoints";
 import { Button, Card, Drawer, HashChip, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmtDateTime, fmtInt } from "@/lib/format";
 import { useSearchParamState } from "@/state/useSearchParamState";
 import { useUiStore } from "@/state/uiStore";
@@ -35,14 +36,14 @@ export function AuditPage() {
           <h1 className="text-xl font-semibold">Audit log</h1>
           <p className="text-sm text-muted">Every run is appended, never edited, and chained by hash so any later change is detectable.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2" {...guide("audit.type-filter")}>
           <Button variant={type ? "default" : "primary"} onClick={() => setType(undefined)}>All</Button>
           {TYPES.map((t) => (
             <Button key={t} variant={type === t ? "primary" : "default"} onClick={() => setType(t)}>
               {t.toLowerCase()}
             </Button>
           ))}
-          <Button onClick={verify}>Verify chain</Button>
+          <Button onClick={verify} {...guide("audit.verify")}>Verify chain</Button>
         </div>
       </header>
 
@@ -51,7 +52,7 @@ export function AuditPage() {
       <Card title="Runs">
         <QueryBoundary query={runs} rows={8}>
           {(rows) => (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" {...guide("audit.runs")}>
               <table className="w-full text-sm">
                 <caption className="sr-only">Audit runs</caption>
                 <thead>
@@ -68,8 +69,8 @@ export function AuditPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.run_id} className="cursor-pointer border-b border-border hover:bg-surface" onClick={() => setOpenRun(r.run_id)}>
+                  {rows.map((r, i) => (
+                    <tr key={r.run_id} data-guide={i === 0 ? "audit.run-row" : undefined} className="cursor-pointer border-b border-border hover:bg-surface" onClick={() => setOpenRun(r.run_id)}>
                       <td className="whitespace-nowrap px-2 py-1.5">{fmtDateTime(r.started_at)}</td>
                       <td className="px-2 py-1.5">{r.run_type.toLowerCase()}</td>
                       <td className="px-2 py-1.5">{r.submission_period ?? "—"}</td>
@@ -88,7 +89,7 @@ export function AuditPage() {
         </QueryBoundary>
       </Card>
 
-      <Card title="Model registry" actions={<span className="text-xs text-muted">Active models are pinned to the feature list they were trained on</span>}>
+      <Card title="Model registry" data-guide="audit.models" actions={<span className="text-xs text-muted">Active models are pinned to the feature list they were trained on</span>}>
         <QueryBoundary query={models} rows={4}>
           {(rows) => (
             <div className="overflow-x-auto">

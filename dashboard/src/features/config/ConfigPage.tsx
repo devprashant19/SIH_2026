@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useConfig, useConfigHistory, useSaveConfigMutation, useWhatIfMutation } from "@/api/hooks";
 import { ThresholdLine } from "@/components/charts/primitives";
 import { Button, Card, HashChip, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt1, fmt2, fmtDateTime } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam } from "@/state/useSearchParamState";
 import { useUiStore } from "@/state/uiStore";
@@ -72,8 +73,8 @@ export function ConfigPage() {
             </div>
             <div className="flex items-center gap-2">
               {dirty && <span className="text-xs text-risk-elevated">unsaved changes</span>}
-              <Button onClick={preview} disabled={whatIf.isPending}>Preview impact</Button>
-              <Button variant="primary" onClick={applySave} disabled={!dirty || save.isPending || Math.abs(weightSum - 1) > 1e-6}>
+              <Button onClick={preview} disabled={whatIf.isPending} {...guide("config.preview")}>Preview impact</Button>
+              <Button variant="primary" onClick={applySave} disabled={!dirty || save.isPending || Math.abs(weightSum - 1) > 1e-6} {...guide("config.save")}>
                 Save
               </Button>
             </div>
@@ -81,7 +82,7 @@ export function ConfigPage() {
 
           <div className="grid gap-3 lg:grid-cols-2">
             <Card title="Supervisory Risk Indicator weights" actions={<span className={Math.abs(weightSum - 1) > 1e-6 ? "text-xs text-risk-high" : "text-xs text-muted"}>sum {weightSum.toFixed(2)}</span>}>
-              <ul className="space-y-2">
+              <ul className="space-y-2" {...guide("config.weights")}>
                 {Object.entries(c.sri_weights.dimensions).map(([key, dim]: [string, any]) => (
                   <li key={key} className="grid grid-cols-[minmax(140px,1fr)_70px_1fr] items-center gap-2 text-sm">
                     <label htmlFor={`w-${key}`}>{dim.label ?? key}</label>
@@ -117,16 +118,18 @@ export function ConfigPage() {
                         <span className="w-32 font-medium">{cls.replace(/_/g, " ")}</span>
                         <label className="inline-flex items-center gap-1">
                           <span className="text-muted">C_FP</span>
-                          <input type="number" step="0.5" min="0.1" className="w-16 rounded-sm border border-border bg-bg px-1 py-0.5 tabular" value={cost.C_FP} onChange={(e) => setCosts({ ...costs, [cls]: { ...cost, C_FP: Number(e.target.value) } })} />
+                          <input type="number" step="0.5" min="0.1" data-guide={cls === "execution_gap" ? "config.cost-cfp" : undefined} className="w-16 rounded-sm border border-border bg-bg px-1 py-0.5 tabular" value={cost.C_FP} onChange={(e) => setCosts({ ...costs, [cls]: { ...cost, C_FP: Number(e.target.value) } })} />
                         </label>
                         <label className="inline-flex items-center gap-1">
                           <span className="text-muted">C_FN</span>
-                          <input type="number" step="0.5" min="0.1" className="w-16 rounded-sm border border-border bg-bg px-1 py-0.5 tabular" value={cost.C_FN} onChange={(e) => setCosts({ ...costs, [cls]: { ...cost, C_FN: Number(e.target.value) } })} />
+                          <input type="number" step="0.5" min="0.1" data-guide={cls === "execution_gap" ? "config.cost-cfn" : undefined} className="w-16 rounded-sm border border-border bg-bg px-1 py-0.5 tabular" value={cost.C_FN} onChange={(e) => setCosts({ ...costs, [cls]: { ...cost, C_FN: Number(e.target.value) } })} />
                         </label>
                         <span className="tabular text-accent">t* = {t.toFixed(3)}</span>
                         <span className="text-xs text-muted">band ±{band}</span>
                       </div>
-                      <ThresholdLine tStar={t} band={band} />
+                      <span data-guide={cls === "execution_gap" ? "config.threshold-line" : undefined}>
+                        <ThresholdLine tStar={t} band={band} />
+                      </span>
                     </li>
                   );
                 })}
@@ -170,7 +173,7 @@ export function ConfigPage() {
           )}
 
           <Card title="Rules" actions={<span className="text-xs text-muted">{Object.values(rules).filter(Boolean).length} of {Object.keys(rules).length} enabled · thresholds live in config/rules.yaml</span>}>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" data-guide="config.rules">
               <caption className="sr-only">Rule catalogue</caption>
               <thead>
                 <tr>
@@ -201,7 +204,7 @@ export function ConfigPage() {
             </table>
           </Card>
 
-          <Card title="Configuration history">
+          <Card title="Configuration history" data-guide="config.history">
             <QueryBoundary query={history} rows={3}>
               {(rows) =>
                 rows.length ? (

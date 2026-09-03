@@ -5,6 +5,7 @@ import { FilterBar, FilterSelect } from "@/components/data/FilterBar";
 import { EntityPicker, SectorPicker } from "@/components/data/Pickers";
 import { RiskBadge } from "@/components/domain/badges";
 import { Card, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt1, fmt2 } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 
@@ -27,7 +28,7 @@ export function PeerPage() {
 
       <FilterBar>
         <QueryBoundary query={metrics} rows={1}>
-          {(m) => <FilterSelect label="Metric" param="metric" fallback="escalation_ratio_critical" options={m.filter((x) => x.headline).map((x) => ({ value: x.key, label: x.label }))} />}
+          {(m) => <FilterSelect label="Metric" param="metric" guide="shared.metric" fallback="escalation_ratio_critical" options={m.filter((x) => x.headline).map((x) => ({ value: x.key, label: x.label }))} />}
         </QueryBoundary>
         <EntityPicker label="Highlight" />
         <SectorPicker />
@@ -37,8 +38,10 @@ export function PeerPage() {
         <QueryBoundary query={bench} rows={4}>
           {(b) => (
             <div className="space-y-2">
-              <PeerDistributionChart data={b} entityId={entity || undefined} height={170} onSelect={setEntity} />
-              <p className="text-sm text-muted">
+              <div {...guide("peer.chart")}>
+                <PeerDistributionChart data={b} entityId={entity || undefined} height={170} onSelect={setEntity} />
+              </div>
+              <p className="text-sm text-muted" {...guide("peer.peer-level")}>
                 Peer group {b.peer_group_id} (level {b.peer_level}, {b.stats.n} entities). {entity && b.entity_value != null ? `${entity} is at ${fmt2(b.entity_value)} against a median of ${fmt2(b.stats.median)}.` : "Select an entity to mark it on the chart."}
               </p>
             </div>
@@ -49,7 +52,7 @@ export function PeerPage() {
       <Card title="Rank table" actions={<span className="text-xs text-muted">Values with their percentile inside the peer group</span>}>
         <QueryBoundary query={rank} rows={6}>
           {(r) => (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" {...guide("peer.rank-table")}>
               <table className="w-full text-sm">
                 <caption className="sr-only">Entity ranking across headline metrics</caption>
                 <thead>

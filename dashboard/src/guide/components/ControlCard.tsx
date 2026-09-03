@@ -95,6 +95,7 @@ export function ControlCard({
               pathname: screen.routePattern,
               search: withSearch(params, { guide: anchor, q: undefined, screen: undefined, kind: undefined, traps: undefined }),
             }}
+            data-guide="guide.show-me"
           >
             Show me on the screen
           </Link>

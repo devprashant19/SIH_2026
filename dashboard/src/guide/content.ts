@@ -634,6 +634,9 @@ export const GUIDE: readonly GuideScreen[] = [
         availability: "requires-data",
         revealedBy: "peer.chart",
         requires: "the distribution has rendered",
+        // Points are drawn by the charting library inside an SVG, so there is no stable element
+        // to anchor. It is described here and spotlit via the chart that contains it.
+        undocumentedInDom: true,
         does: "Selects that entity, highlighting it on the chart and naming its value against the median in the line below.",
         demonstrates: "The chart is a control, not a picture.",
         writesParams: [{ param: "entity", clearedAt: "" }],

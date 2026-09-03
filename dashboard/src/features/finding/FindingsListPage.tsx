@@ -31,14 +31,14 @@ export function FindingsListPage() {
         actions={
           <FilterBar>
             <EntityPicker />
-            <FilterSelect label="Dimension" param="dimension" options={Object.entries(DIMENSION_LABELS).map(([value, label]) => ({ value, label }))} />
-            <FilterSelect label="Decision" param="decision" options={[{ value: "AUTO_FLAG", label: "Flagged" }, { value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_CLEAR", label: "Cleared" }]} />
-            <FilterSelect label="Status" param="status" options={[{ value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "uncertain", label: "Uncertain" }]} />
+            <FilterSelect label="Dimension" param="dimension" guide="shared.dimension" options={Object.entries(DIMENSION_LABELS).map(([value, label]) => ({ value, label }))} />
+            <FilterSelect label="Decision" param="decision" guide="shared.decision" options={[{ value: "AUTO_FLAG", label: "Flagged" }, { value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_CLEAR", label: "Cleared" }]} />
+            <FilterSelect label="Status" param="status" guide="shared.status" options={[{ value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "uncertain", label: "Uncertain" }]} />
           </FilterBar>
         }
       >
         <QueryBoundary query={q} rows={8}>
-          {(d) => <FindingsTable items={d.items} period={period} showEntity emptyHint="Clear a filter or choose another period." />}
+          {(d) => <FindingsTable items={d.items} period={period} showEntity tableGuide="findings.table" firstRowGuide="findings.row" emptyHint="Clear a filter or choose another period." />}
         </QueryBoundary>
       </Card>
     </div>

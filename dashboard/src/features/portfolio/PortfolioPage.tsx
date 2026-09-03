@@ -6,6 +6,7 @@ import { SectorPicker } from "@/components/data/Pickers";
 import { FindingsTable } from "@/components/domain/FindingsTable";
 import { StatTile } from "@/components/domain/StatTile";
 import { Button, Card, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmtInt } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 
@@ -30,10 +31,10 @@ export function PortfolioPage() {
           <SectorPicker />
           <span className="inline-flex items-center gap-1">
             <span className="text-muted">Lens</span>
-            <Button variant={lens !== "capability" ? "primary" : "default"} onClick={() => setLens("sri")}>
+            <Button variant={lens !== "capability" ? "primary" : "default"} onClick={() => setLens("sri")} {...guide("portfolio.lens-sri")}>
               Risk dimensions
             </Button>
-            <Button variant={lens === "capability" ? "primary" : "default"} onClick={() => setLens("capability")}>
+            <Button variant={lens === "capability" ? "primary" : "default"} onClick={() => setLens("capability")} {...guide("portfolio.lens-capability")}>
               Capability areas
             </Button>
           </span>
@@ -43,11 +44,11 @@ export function PortfolioPage() {
       <QueryBoundary query={summary} rows={1}>
         {(s) => (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <StatTile label="Entities scored" value={fmtInt(s.n_entities)} hint={s.period ?? "no data"} />
-            <StatTile label="High or critical" value={fmtInt(s.n_high_risk)} delta={s.high_risk_delta} tone="risk" />
-            <StatTile label="Open findings" value={fmtInt(s.n_open_findings)} to={`/findings?period=${period}&status=open`} />
-            <StatTile label="Uncertain" value={fmtInt(s.n_uncertain)} tone="uncertain" hint="inside the decision band" to={`/findings?period=${period}&decision=MANUAL_REVIEW`} />
-            <StatTile label="Data-quality failures" value={fmtInt(s.n_dq_failures)} to={`/ingestion?period=${period}`} />
+            <StatTile label="Entities scored" value={fmtInt(s.n_entities)} hint={s.period ?? "no data"} data-guide="portfolio.tile-entities" />
+            <StatTile label="High or critical" value={fmtInt(s.n_high_risk)} delta={s.high_risk_delta} tone="risk" data-guide="portfolio.tile-high-risk" />
+            <StatTile label="Open findings" value={fmtInt(s.n_open_findings)} to={`/findings?period=${period}&status=open`} data-guide="portfolio.tile-open" />
+            <StatTile label="Uncertain" value={fmtInt(s.n_uncertain)} tone="uncertain" hint="inside the decision band" to={`/findings?period=${period}&decision=MANUAL_REVIEW`} data-guide="portfolio.tile-uncertain" />
+            <StatTile label="Data-quality failures" value={fmtInt(s.n_dq_failures)} to={`/ingestion?period=${period}`} data-guide="portfolio.tile-dq" />
           </div>
         )}
       </QueryBoundary>
@@ -77,9 +78,9 @@ export function PortfolioPage() {
         </QueryBoundary>
       </Card>
 
-      <Card title="Prioritised review queue" actions={<Link className="text-sm text-accent hover:underline" to={`/findings?period=${period}&status=open`}>See all findings</Link>}>
+      <Card title="Prioritised review queue" actions={<Link className="text-sm text-accent hover:underline" to={`/findings?period=${period}&status=open`} {...guide("portfolio.see-all-findings")}>See all findings</Link>}>
         <QueryBoundary query={queue} rows={6}>
-          {(q) => <FindingsTable items={q.items} period={period} showEntity emptyHint="Nothing awaiting review for this period." />}
+          {(q) => <FindingsTable items={q.items} period={period} showEntity tableGuide="portfolio.queue-preview" emptyHint="Nothing awaiting review for this period." />}
         </QueryBoundary>
       </Card>
     </div>

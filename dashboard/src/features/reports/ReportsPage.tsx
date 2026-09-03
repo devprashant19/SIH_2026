@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useEntities, useFeedbackStats, usePeriods, useReports } from "@/api/hooks";
 import { download, endpoints } from "@/api/endpoints";
 import { Button, Card, QueryBoundary, Select } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt2, fmtDateTime } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam } from "@/state/useSearchParamState";
 import { useUiStore } from "@/state/uiStore";
@@ -42,7 +43,7 @@ export function ReportsPage() {
               <span className="text-muted">Entity</span>
               <QueryBoundary query={entities} rows={1}>
                 {(list) => (
-                  <Select className="mt-1 w-full" value={entityId} onChange={(e) => setEntityId(e.target.value)}>
+                  <Select className="mt-1 w-full" value={entityId} onChange={(e) => setEntityId(e.target.value)} {...guide("reports.entity-select")}>
                     <option value="">Choose…</option>
                     {list.map((e) => (
                       <option key={e.entity_id} value={e.entity_id}>
@@ -66,10 +67,10 @@ export function ReportsPage() {
             </label>
             <p className="text-xs text-muted">Includes the SRI scorecard arithmetic, every finding with its rationale, the alert samples selected for review, and the feedback recorded so far.</p>
             <div className="flex gap-2">
-              <Button variant="primary" disabled={!entityId} onClick={() => run(() => endpoints.entityPdf(entityId, target), `SATSA_${entityId}_${target}.pdf`)}>
+              <Button variant="primary" disabled={!entityId} onClick={() => run(() => endpoints.entityPdf(entityId, target), `SATSA_${entityId}_${target}.pdf`)} {...guide("reports.entity-pdf")}>
                 Generate PDF
               </Button>
-              <Button disabled={!entityId} onClick={() => run(() => endpoints.csv("findings", target, entityId), `findings_${entityId}_${target}.csv`)}>
+              <Button disabled={!entityId} onClick={() => run(() => endpoints.csv("findings", target, entityId), `findings_${entityId}_${target}.csv`)} {...guide("reports.entity-csv")}>
                 Findings CSV
               </Button>
             </div>
@@ -81,11 +82,11 @@ export function ReportsPage() {
             <p className="text-muted">Period {target ?? "—"}</p>
             <p className="text-xs text-muted">Heatmap of every entity, control priorities across the portfolio, and the counts a supervisor needs for a period summary.</p>
             <div className="flex flex-wrap gap-2">
-              <Button variant="primary" disabled={!target} onClick={() => run(() => endpoints.periodPdf(target!), `SATSA_portfolio_${target}.pdf`)}>
+              <Button variant="primary" disabled={!target} onClick={() => run(() => endpoints.periodPdf(target!), `SATSA_portfolio_${target}.pdf`)} {...guide("reports.portfolio-pdf")}>
                 Generate PDF
               </Button>
-              {(["findings", "sri", "alert_samples", "features"] as const).map((kind) => (
-                <Button key={kind} disabled={!target} onClick={() => run(() => endpoints.csv(kind, target), `${kind}_${target}.csv`)}>
+              {(["findings", "sri", "alert_samples", "features"] as const).map((kind, i) => (
+                <Button key={kind} data-guide={i === 0 ? "reports.portfolio-csv" : undefined} disabled={!target} onClick={() => run(() => endpoints.csv(kind, target), `${kind}_${target}.csv`)}>
                   {kind.replace("_", " ")} CSV
                 </Button>
               ))}
@@ -94,7 +95,7 @@ export function ReportsPage() {
         </Card>
       </div>
 
-      <Card title="Feedback and calibration" actions={<span className="text-xs text-muted">Supervisor decisions are what recalibrate the model</span>}>
+      <Card title="Feedback and calibration" data-guide="reports.feedback-stats" actions={<span className="text-xs text-muted">Supervisor decisions are what recalibrate the model</span>}>
         <QueryBoundary query={stats} rows={3}>
           {(s) => (
             <div className="grid gap-3 md:grid-cols-2">
@@ -141,7 +142,7 @@ export function ReportsPage() {
         </QueryBoundary>
       </Card>
 
-      <Card title="Generated reports">
+      <Card title="Generated reports" data-guide="reports.history">
         <QueryBoundary query={reports} rows={3}>
           {(rows) =>
             rows.length ? (

@@ -9,6 +9,7 @@ import { FilterBar, FilterSelect } from "@/components/data/FilterBar";
 import { FindingsTable } from "@/components/domain/FindingsTable";
 import { RiskBadge, SupportBadge } from "@/components/domain/badges";
 import { Button, Card, HashChip, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt1, fmt2, fmtPct } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 import { useUiStore } from "@/state/uiStore";
@@ -65,8 +66,8 @@ export function EntityPage() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button onClick={() => exportFile("pdf")}>Export PDF</Button>
-                <Button onClick={() => exportFile("csv")}>Export findings CSV</Button>
+                <Button onClick={() => exportFile("pdf")} {...guide("entity.export-pdf")}>Export PDF</Button>
+                <Button onClick={() => exportFile("csv")} {...guide("entity.export-csv")}>Export findings CSV</Button>
               </div>
             </header>
 
@@ -85,10 +86,10 @@ export function EntityPage() {
                     "Supervisory Risk Indicator"
                   )
                 }
-                actions={d.sri ? <Link to="/config" className="text-xs text-accent hover:underline">weights {d.sri.weights_hash.slice(0, 8)} · edit</Link> : null}
+                actions={d.sri ? <Link to="/config" className="text-xs text-accent hover:underline" {...guide("entity.weights-link")}>weights {d.sri.weights_hash.slice(0, 8)} · edit</Link> : null}
               >
                 {d.sri ? (
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" data-guide="entity.sri-table">
                     <caption className="sr-only">SRI dimension scores, weights and contributions</caption>
                     <thead>
                       <tr>
@@ -100,9 +101,10 @@ export function EntityPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {d.sri.dimensions.map((dim) => (
+                      {d.sri.dimensions.map((dim, di) => (
                         <tr
                           key={dim.name}
+                          data-guide={di === 0 ? "entity.sri-row" : undefined}
                           className={dimension === dim.name ? "bg-accent-bg" : "hover:bg-surface"}
                           onClick={() => setDimension(dimension === dim.name ? undefined : dim.name)}
                           tabIndex={0}
@@ -145,11 +147,12 @@ export function EntityPage() {
               </Card>
 
               <div className="space-y-3">
-                <Card title="Peer position">
+                <Card title="Peer position" data-guide="entity.peer-chart">
                   <FilterBar>
                     <FilterSelect
                       label="Metric"
                       param="metric"
+                      guide="shared.metric"
                       fallback="note_template_score"
                       options={d.headline_features.map((f) => ({ value: f.name, label: f.label }))}
                     />
@@ -160,7 +163,7 @@ export function EntityPage() {
                     </QueryBoundary>
                   </div>
                 </Card>
-                <Card title="Data quality">
+                <Card title="Data quality" data-guide="entity.data-quality">
                   {d.data_quality ? (
                     <ul className="space-y-1 text-sm">
                       <li>Rows submitted: <span className="tabular">{d.data_quality.rows}</span></li>
@@ -176,7 +179,7 @@ export function EntityPage() {
             </div>
 
             <div className="grid gap-3 lg:grid-cols-2">
-              <Card title="Supervisory Risk Indicator over time">
+              <Card title="Supervisory Risk Indicator over time" data-guide="entity.trend">
                 <QueryBoundary query={trend} rows={4}>
                   {(t) => (
                     <TrendChart
@@ -189,7 +192,7 @@ export function EntityPage() {
                   )}
                 </QueryBoundary>
               </Card>
-              <Card title="Key metrics against peers">
+              <Card title="Key metrics against peers" data-guide="entity.headline-metrics">
                 <table className="w-full text-sm">
                   <caption className="sr-only">Headline features compared with the peer group</caption>
                   <thead>
@@ -220,7 +223,7 @@ export function EntityPage() {
             </div>
 
             {d.controls.length > 0 && (
-              <Card title="Control priorities" actions={<span className="text-xs text-muted">Expected cost of missing the weaknesses behind each control</span>}>
+              <Card title="Control priorities" data-guide="entity.controls" actions={<span className="text-xs text-muted">Expected cost of missing the weaknesses behind each control</span>}>
                 <ul className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
                   {d.controls.map((c) => (
                     <li key={c.control_id} className="rounded-sm border border-border p-2 text-sm">
@@ -238,14 +241,14 @@ export function EntityPage() {
               title={`Findings${dimension ? ` · ${DIMENSION_LABELS[dimension as SriDimension] ?? dimension}` : capability ? ` · ${capability}` : ""}`}
               actions={
                 <FilterBar>
-                  <FilterSelect label="Dimension" param="dimension" options={Object.entries(DIMENSION_LABELS).map(([value, label]) => ({ value, label }))} />
-                  <FilterSelect label="Decision" param="decision" options={[{ value: "AUTO_FLAG", label: "Flagged" }, { value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_CLEAR", label: "Cleared" }]} />
-                  <FilterSelect label="Status" param="status" options={[{ value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "uncertain", label: "Uncertain" }]} />
+                  <FilterSelect label="Dimension" param="dimension" guide="shared.dimension" options={Object.entries(DIMENSION_LABELS).map(([value, label]) => ({ value, label }))} />
+                  <FilterSelect label="Decision" param="decision" guide="shared.decision" options={[{ value: "AUTO_FLAG", label: "Flagged" }, { value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_CLEAR", label: "Cleared" }]} />
+                  <FilterSelect label="Status" param="status" guide="shared.status" options={[{ value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "uncertain", label: "Uncertain" }]} />
                 </FilterBar>
               }
             >
               <QueryBoundary query={findings} rows={5}>
-                {(f) => <FindingsTable items={f.items} period={period} emptyHint="Try clearing the dimension or status filter." />}
+                {(f) => <FindingsTable items={f.items} period={period} tableGuide="entity.findings" firstRowGuide="entity.findings-first-row" emptyHint="Try clearing the dimension or status filter." />}
               </QueryBoundary>
             </Card>
           </>

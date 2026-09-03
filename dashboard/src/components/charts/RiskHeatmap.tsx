@@ -30,7 +30,7 @@ export function RiskHeatmap({ rows, lens, period, onCellClick }: { rows: Heatmap
   const label = (c: string) => (lens === "capability" ? c : DIMENSION_LABELS[c as SriDimension]);
   const valueOf = (r: HeatmapRow, c: string) => (lens === "capability" ? r.capabilities[c as Capability] : r.dims[c as SriDimension]);
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" data-guide="portfolio.heatmap">
       <table className="w-full text-sm">
         <caption className="sr-only">Entity risk by {lens === "capability" ? "capability area" : "supervisory dimension"} for {period}</caption>
         <thead>
@@ -60,12 +60,15 @@ export function RiskHeatmap({ rows, lens, period, onCellClick }: { rows: Heatmap
               <td className="whitespace-nowrap px-2 py-1.5">
                 <span className="tabular font-medium">{fmt1(r.sri)}</span> <RiskBadge band={r.band} compact />
               </td>
-              {columns.map((c) => {
+              {columns.map((c, ci) => {
                 const v = valueOf(r, c);
                 return (
                   <td key={c} className="px-1 py-1">
                     <button
                       type="button"
+                      // Only the first cell is anchored, so "click a cell" is demonstrable
+                      // without generating one anchor per entity and column.
+                      data-guide={r === rows[0] && ci === 0 ? "portfolio.heatmap-cell" : undefined}
                       onClick={() => onCellClick?.(r.entity_id, c)}
                       title={`${r.entity_id} · ${label(c)}: ${v == null ? "not scored" : fmt1(v)}`}
                       className={cn("w-full rounded-sm px-2 py-1 text-left tabular", cellClass(v))}

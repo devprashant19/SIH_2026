@@ -9,6 +9,7 @@ import { FeedbackBar } from "@/components/domain/FeedbackBar";
 import { FindingsTable } from "@/components/domain/FindingsTable";
 import { DecisionBadge, FeedbackBadge, RiskBadge } from "@/components/domain/badges";
 import { Button, Card, Drawer, QueryBoundary } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt2, fmtMinutes, fmtProb } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 import type { QueueItem } from "@/api/types";
@@ -27,6 +28,7 @@ export function QueuePage() {
   const findings = useFindings({ period: p, entity_id: entity || undefined, sector: sector || undefined, decision: decision || undefined, status: "open", limit: 500 }, { enabled: scope === "entity" });
   const controls = useControls(p, sector || undefined);
   const detail = useQueueItem(selected?.flag_id);
+  const active = (scope || "sample") as Scope;
 
   const columns: ColumnDef<QueueItem, any>[] = [
     { accessorKey: "queue_rank", header: "#", cell: (c) => <span className="tabular text-muted">{c.getValue<number>()}</span> },
@@ -48,22 +50,27 @@ export function QueuePage() {
           <h1 className="text-xl font-semibold">Review queue</h1>
           <p className="text-sm text-muted">Prioritised work for manual examination. Uncertain items come first because the tool cannot decide them.</p>
         </div>
+        {/* Written out rather than mapped so each button carries a literal guide anchor. */}
         <FilterBar>
-          {(["sample", "entity", "control"] as Scope[]).map((s) => (
-            <Button key={s} variant={(scope || "sample") === s ? "primary" : "default"} onClick={() => setScope(s)}>
-              {s === "sample" ? "Alert samples" : s === "entity" ? "Entity findings" : "Controls and processes"}
-            </Button>
-          ))}
+          <Button variant={active === "sample" ? "primary" : "default"} onClick={() => setScope("sample")} {...guide("queue.scope-sample")}>
+            Alert samples
+          </Button>
+          <Button variant={active === "entity" ? "primary" : "default"} onClick={() => setScope("entity")} {...guide("queue.scope-entity")}>
+            Entity findings
+          </Button>
+          <Button variant={active === "control" ? "primary" : "default"} onClick={() => setScope("control")} {...guide("queue.scope-control")}>
+            Controls and processes
+          </Button>
         </FilterBar>
       </header>
 
       <FilterBar>
         <EntityPicker />
         <SectorPicker />
-        <FilterSelect label="Decision" param="decision" options={[{ value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_FLAG", label: "Flagged" }]} />
+        <FilterSelect label="Decision" param="decision" guide="shared.decision" options={[{ value: "MANUAL_REVIEW", label: "Uncertain" }, { value: "AUTO_FLAG", label: "Flagged" }]} />
       </FilterBar>
 
-      {(scope || "sample") === "sample" && (
+      {active === "sample" && (
         <Card title={queue.data ? `${queue.data.total} alert samples` : "Alert samples"} actions={<span className="text-xs text-muted">Sampling is round-robin across rules so every kind of weakness is represented</span>}>
           <QueryBoundary query={queue} rows={8}>
             {(d) => (
@@ -73,6 +80,8 @@ export function QueuePage() {
                 rowKey={(r) => r.flag_id}
                 onRowClick={(r) => setSelected(r)}
                 isRowActive={(r) => r.flag_id === selected?.flag_id}
+                tableGuide="queue.table"
+                firstRowGuide="queue.row"
                 emptyTitle="Queue is clear for these filters"
                 caption="Click a row to preview the alert and record a decision."
               />
@@ -81,7 +90,7 @@ export function QueuePage() {
         </Card>
       )}
 
-      {scope === "entity" && (
+      {active === "entity" && (
         <Card title="Entity findings awaiting review">
           <QueryBoundary query={findings} rows={8}>
             {(d) => <FindingsTable items={d.items} period={period} showEntity />}
@@ -149,7 +158,9 @@ export function QueuePage() {
                   </ul>
                 </div>
               )}
-              <FeedbackBar targetType="alert_flag" targetId={d.flag.flag_id} compact />
+              <div {...guide("queue.drawer-feedback")}>
+                <FeedbackBar targetType="alert_flag" targetId={d.flag.flag_id} compact />
+              </div>
             </div>
           )}
         </QueryBoundary>

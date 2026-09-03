@@ -6,6 +6,7 @@ import { DataTable } from "@/components/data/DataTable";
 import { FeedbackBar } from "@/components/domain/FeedbackBar";
 import { DecisionBadge, RiskBadge, TypeBadge } from "@/components/domain/badges";
 import { Button, Card, Drawer, QueryBoundary, Tabs } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmt2, fmtDateTime, fmtMinutes, fmtProb } from "@/lib/format";
 import { usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 import type { AlertRecord, ShapContribution } from "@/api/types";
@@ -58,10 +59,12 @@ export function FindingPage() {
                 <TypeBadge source={f.source} />
                 {f.rule_id && <span className="rounded-sm bg-surface px-1.5 py-0.5 font-mono text-xs">{f.rule_id} v{f.rule_version}</span>}
                 {f.capability && <span className="rounded-sm border border-border px-1.5 py-0.5 text-xs text-muted">{f.capability}</span>}
-                <DecisionBadge decision={f.decision} p={f.p_final} tStar={f.t_star} bandRange={[f.band_low, f.band_high]} />
+                <span {...guide("finding.decision-badge")}>
+                  <DecisionBadge decision={f.decision} p={f.p_final} tStar={f.t_star} bandRange={[f.band_low, f.band_high]} />
+                </span>
               </div>
-              <p className="max-w-4xl text-sm">{f.rationale}</p>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-muted">
+              <p className="max-w-4xl text-sm" {...guide("finding.rationale")}>{f.rationale}</p>
+              <div className="flex flex-wrap items-center gap-4 text-xs text-muted" {...guide("finding.score-line")}>
                 <span>p = {fmtProb(f.p_final)}{f.p_rule != null && ` (rules ${fmtProb(f.p_rule)}`}{f.p_ml != null && `, model ${fmtProb(f.p_ml)}`}{f.p_rule != null && ")"}</span>
                 <span title={f.p_ml == null ? "This finding comes from a deterministic rule, so there is no model probability to calibrate." : undefined}>
                   {f.p_ml == null
@@ -73,12 +76,12 @@ export function FindingPage() {
                 <span>expected cost if missed: {fmt2(f.expected_cost)}</span>
                 <span>{f.n_evidence_alerts} evidence alerts</span>
               </div>
-              <div className="max-w-md">
+              <div className="max-w-md" {...guide("finding.threshold")}>
                 <ThresholdLine tStar={f.t_star} band={f.t_star - f.band_low} marks={[{ p: f.p_final, label: `p = ${fmtProb(f.p_final)}` }]} />
               </div>
             </header>
 
-            <Card title="Supervisor decision">
+            <Card title="Supervisor decision" data-guide="finding.feedback">
               <FeedbackBar targetType="finding" targetId={f.finding_id} status={f.feedback_status} />
               {f.feedback.length > 0 && (
                 <ul className="mt-3 space-y-1 text-xs text-muted">
@@ -96,9 +99,9 @@ export function FindingPage() {
               active={tab || "evidence"}
               onChange={setTab}
               tabs={[
-                { key: "evidence", label: "Evidence" },
-                { key: "explanation", label: "Explanation" },
-                { key: "records", label: `Raw records (${f.n_evidence_alerts})` },
+                { key: "evidence", label: "Evidence", guide: "finding.tab-evidence" },
+                { key: "explanation", label: "Explanation", guide: "finding.tab-explanation" },
+                { key: "records", label: `Raw records (${f.n_evidence_alerts})`, guide: "finding.tab-records" },
               ]}
             />
 
@@ -161,12 +164,13 @@ export function FindingPage() {
                 {f.shap && (
                   <Card title="Model attribution" actions={<span className="text-xs text-muted">{f.shap.method === "shap_tree_isolation_forest" ? "SHAP on the isolation forest" : "peer z-score attribution"}</span>}>
                     <ul className="space-y-1.5">
-                      {f.shap.contributions.map((c: ShapContribution & { label?: string }) => {
+                      {f.shap.contributions.map((c: ShapContribution & { label?: string }, ci) => {
                         const inEvidence = f.evidence_features.some((e) => e.name === c.feature);
                         return (
                           <li key={c.feature}>
                             <button
                               type="button"
+                              data-guide={ci === 0 ? "finding.attribution-row" : undefined}
                               disabled={!inEvidence}
                               onClick={() => {
                                 setSelectedFeature(c.feature);

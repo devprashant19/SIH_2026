@@ -4,6 +4,7 @@ import { usePeriods, usePipelineStatus, useRunPipelineMutation, useSubmissions, 
 import { FilterBar } from "@/components/data/FilterBar";
 import { PeriodPicker } from "@/components/data/Pickers";
 import { Button, Card, HashChip, QueryBoundary, Select } from "@/components/ui/primitives";
+import { guide } from "@/guide/model";
 import { fmtDateTime, fmtInt, fmtPct } from "@/lib/format";
 import { periodOrUndefined, usePeriodParam } from "@/state/useSearchParamState";
 import { useUiStore } from "@/state/uiStore";
@@ -61,7 +62,7 @@ export function IngestionPage() {
         </div>
         <FilterBar>
           <PeriodPicker />
-          <Button variant="primary" onClick={run} disabled={runPipeline.isPending || !!status.data?.running}>
+          <Button variant="primary" onClick={run} disabled={runPipeline.isPending || !!status.data?.running} {...guide("ingestion.run")}>
             {status.data?.running ? "Analysis running…" : "Run analysis"}
           </Button>
         </FilterBar>
@@ -74,7 +75,7 @@ export function IngestionPage() {
               <span className="text-muted">Entity</span>
               <QueryBoundary query={entities} rows={1}>
                 {(list) => (
-                  <Select className="mt-1 w-full" value={entityId} onChange={(e) => setEntityId(e.target.value)}>
+                  <Select className="mt-1 w-full" value={entityId} onChange={(e) => setEntityId(e.target.value)} {...guide("ingestion.upload-entity")}>
                     <option value="">Choose…</option>
                     {list.map((e) => (
                       <option key={e.entity_id} value={e.entity_id}>
@@ -87,20 +88,20 @@ export function IngestionPage() {
             </label>
             <label className="block">
               <span className="text-muted">Submission period</span>
-              <input className="mt-1 w-full rounded-sm border border-border bg-bg px-2 py-1" placeholder="2026-07" value={uploadPeriod} onChange={(e) => setUploadPeriod(e.target.value)} />
+              <input className="mt-1 w-full rounded-sm border border-border bg-bg px-2 py-1" placeholder="2026-07" value={uploadPeriod} onChange={(e) => setUploadPeriod(e.target.value)} {...guide("ingestion.upload-period")} />
             </label>
             <label className="block">
               <span className="text-muted">Files (CSV, JSON or SQLite)</span>
-              <input className="mt-1 w-full text-xs" type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} />
+              <input className="mt-1 w-full text-xs" type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} {...guide("ingestion.upload-files")} />
             </label>
             {files.length > 0 && <p className="text-xs text-muted">{files.map((f) => f.name).join(", ")}</p>}
-            <Button variant="primary" onClick={submit} disabled={upload.isPending}>
+            <Button variant="primary" onClick={submit} disabled={upload.isPending} {...guide("ingestion.upload-submit")}>
               {upload.isPending ? "Uploading…" : "Upload and validate"}
             </Button>
           </div>
         </Card>
 
-        <Card title="Analysis status" className="lg:col-span-2">
+        <Card title="Analysis status" className="lg:col-span-2" data-guide="ingestion.status">
           {status.data?.running ? (
             <div className="space-y-1 text-sm">
               <p className="font-medium">Running {status.data.running.kind.toLowerCase()} for {String(status.data.running.params.period ?? "")}</p>
@@ -150,7 +151,7 @@ export function IngestionPage() {
       <Card title="Submissions and validation results" actions={<span className="text-xs text-muted">A CSE that cannot submit clean data is itself a supervisory signal</span>}>
         <QueryBoundary query={submissions} rows={6}>
           {(list) => (
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" data-guide="ingestion.submissions">
               <caption className="sr-only">Submissions with validation counts</caption>
               <thead>
                 <tr>

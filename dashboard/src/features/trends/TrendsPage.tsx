@@ -32,11 +32,11 @@ export function TrendsPage() {
       <FilterBar>
         <SectorPicker />
         <QueryBoundary query={entities} rows={1}>
-          {(list) => <FilterSelect label="Entity detail" param="entity" options={list.map((e) => ({ value: e.entity_id, label: `${e.entity_id} · ${e.name}` }))} />}
+          {(list) => <FilterSelect label="Entity detail" param="entity" guide="trends.entity-select" options={list.map((e) => ({ value: e.entity_id, label: `${e.entity_id} · ${e.name}` }))} />}
         </QueryBoundary>
       </FilterBar>
 
-      <Card title="Supervisory Risk Indicator by entity">
+      <Card title="Supervisory Risk Indicator by entity" data-guide="trends.sri-chart">
         <QueryBoundary query={sectorTrend} rows={6}>
           {(t) => {
             const ids = Object.keys(t.entities).slice(0, 6);
@@ -72,7 +72,7 @@ export function TrendsPage() {
         </Card>
       )}
 
-      <Card title="Control priorities over time" actions={<span className="text-xs text-muted">Which processes are failing across the portfolio</span>}>
+      <Card title="Control priorities over time" data-guide="trends.controls-chart" actions={<span className="text-xs text-muted">Which processes are failing across the portfolio</span>}>
         <QueryBoundary query={controls} rows={6}>
           {(t) => (
             <TrendChart

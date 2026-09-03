@@ -155,7 +155,7 @@ export function GuidePage() {
             </section>
           ))}
 
-          <section id="guide-concepts" tabIndex={-1} className="card p-3">
+          <section id="guide-concepts" tabIndex={-1} className="card p-3" data-guide="guide.concepts">
             <h2 className="text-base font-semibold">Concepts</h2>
             <p className="mt-1 text-sm text-muted">The ideas the screens assume. Knowing what a button does is not the same as knowing why the tool works this way.</p>
             <dl className="mt-3 space-y-3">
