@@ -35,8 +35,8 @@ SHOTS: list[tuple[str, str, str]] = [
     ("config", f"/config?period={PERIOD}", "Weights, and the threshold derived from the cost of being wrong"),
     ("audit", f"/audit?period={PERIOD}", "The hash-chained run log"),
     ("reports", f"/reports?period={PERIOD}", "PDF and CSV export, stamped with provenance"),
-    ("guide", "/guide", "The in-app guide: every control, what it does and what it demonstrates"),
-    ("help", "", "The help panel, opened with Shift+/ on any screen"),  # opened, not a bare URL
+    ("help", "", "The help panel, opened with Shift+/ on any screen"),  # a state, not a URL
+    ("tour", "", "The product tour: everything dimmed except the control being explained"),
 ]
 
 
@@ -81,6 +81,17 @@ def main() -> int:
         page.screenshot(path=OUT / "help.png")
         written.append("help")
         print("  help.png")
+
+        # The tour is an overlay, so it has to be started rather than navigated to.
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(400)
+        page.click("button[aria-label^='Take a tour']")
+        page.wait_for_timeout(1800)
+        page.get_by_role("button", name="Next").click()
+        page.wait_for_timeout(2000)
+        page.screenshot(path=OUT / "tour.png")
+        written.append("tour")
+        print("  tour.png")
 
         browser.close()
     print(f"\n{len(written)} screenshots in {OUT}")

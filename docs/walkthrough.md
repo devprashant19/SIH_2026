@@ -160,17 +160,17 @@ Set the period selector at the top to **2026-06** and start on Portfolio. Every 
 below is what that period actually shows.
 
 > **The tool also explains itself.** Everything in this part is available inside the running
-> application, next to the controls it describes. Press `Shift` + `/` on any screen for a panel
-> covering the controls in front of you, open **How this works** in the navigation for the full
-> searchable reference, or take the nine-step guided tour. This document is the version you can
-> read without starting the server. See [2.15](#215-the-in-app-guide).
+> application, on top of the controls it describes. Click the help button at the bottom-left for
+> a twenty-step tour, or press `Shift` + `/` for a panel covering the controls in front of you.
+> This document is the version you can read without starting the server. See
+> [2.15](#215-the-in-app-tour).
 
 ## 2.1 The shell
 
 Present on every screen:
 
-- **Navigation rail**, eleven routes, collapsible with the `«` button. A skip link precedes
-  it for keyboard users. The last route, **How this works**, is the guide to the other ten.
+- **Navigation rail**, ten routes, collapsible with the `«` button. A skip link precedes it
+  for keyboard users.
 - **Period selector**, top left. It writes to the URL as `?period=2026-06`, so every view is
   deep-linkable and the browser back button works properly.
 - **Provenance chip**, top right: `v0.1.0 · code e65f0806 · config 677c7fee · last run …`.
@@ -179,6 +179,8 @@ Present on every screen:
 - **Help button** (`?`), top right beside the provenance chip, or `Shift` + `/` from
   anywhere outside a text field. Opens a panel describing every control on the screen you are
   currently looking at.
+- **Take a tour**, the floating button at the bottom-left, which starts the product tour over
+  whatever screen you are on.
 - **Footer note**: *Supervisory analytics aid. Findings are indicators for examiner review,
   not conclusions.* Deliberately always on screen.
 
@@ -509,43 +511,45 @@ these screens.
 
 ---
 
-## 2.15 The in-app guide
+## 2.15 The in-app tour
 
-![The guide](screenshots/guide.png)
+![The product tour](screenshots/tour.png)
 
-Everything in Part 2 is also inside the application, beside the controls it describes. There
-are three ways in.
+Everything in Part 2 is also inside the application, laid over the controls it describes rather
+than in a page of its own.
 
-**The help panel.** Press `Shift` + `/` on any screen, or click the `?` beside the provenance
-chip. The panel lists every control on the screen you are looking at, with what it does, what
-it demonstrates, which URL parameter it writes, and a **Show me** button that dims the screen
-and points at it. It changes as you navigate. The guard on the shortcut means typing `?` in a
-comment box or a weight field does nothing, as it should.
+**Starting it.** The floating button at the bottom-left of every screen, labelled **Take a
+tour** on hover. It carries a small accent dot until the tour has been taken once. Nothing ever
+starts on its own.
 
-![The help panel](screenshots/help.png)
+**What it does.** The whole screen dims and blurs except the control being explained, which
+keeps a glowing outline, stays sharp and stays clickable. A popup beside it gives the feature in
+one or two sentences, and under a quieter **How it works** heading, a note on how it is built:
+why the period lives in the address bar, where the decision threshold comes from, why peer
+comparison uses the median rather than the mean. **Next** moves the spotlight to the next
+feature, scrolling to it or navigating to the screen it lives on; **Back** returns; **Skip
+guide** exits at once and hands full control back. A bar and a `3 / 20` readout show how far
+along you are, and the last step offers **Finish** instead of Next.
 
-**The reference.** **How this works** in the navigation, or `/guide`, describes all 98
-controls in one searchable page. Filter by screen, by kind of control, or by **Watch out for
-these**, which collects the six behaviours that surprise people: the period being global and
-sticky, filters persisting between screens because they live in the address bar, a re-uploaded
-file being a deliberate no-op, an unchanged run being skipped rather than repeated, saving the
-configuration not changing any result until you re-run, and the feedback shortcuts being
-bar-wide rather than per button. The page closes with the twelve ideas the screens assume:
-the risk indicator, the threshold, the uncertainty band, peer groups, negative space,
-calibration, provenance and the rest.
+**What it covers.** Twenty steps across all eleven screens, in the order a supervisor works:
+the period selector, the ranking and its two lenses, the count of decisions the tool refuses to
+make, an entity's scorecard arithmetic and peer position, a finding's threshold line, the raw
+records beneath it, the examiner's decision, the review queue at its three grains, peer
+distribution, negative space, trends, ingestion and validation, the cost inputs and the rule
+catalogue, the audit chain, and export.
 
-**The guided tour.** From the reference page or the help panel. Nine steps across three
-screens, following the drill-down the tool is built around: the period selector, the two
-heatmap lenses, the uncertain count, the ranking, an entity's scorecard arithmetic, a
-finding's threshold line, the raw records behind it, the examiner's decision, and the
-provenance chip. It navigates for you, it keeps the selected period throughout, and its
-position lives in the address bar as `?tour=onboarding.4`, so a tour link opens at that step
-and a reload resumes where you were. Escape ends it. Nothing ever starts on its own; a first
-visit gets one dismissable toast offering it.
+**On a phone** the popup docks to the bottom of the screen at full width instead of chasing the
+target, and the spotlight still works.
 
-**Why it cannot go stale.** One content model in `dashboard/src/guide/content.ts` drives all
-three surfaces, and each control it describes is bound to a real element by a `data-guide`
-attribute. A test parses the source and reconciles the two in both directions: an attribute
-with no description fails, a description with no attribute fails, and any interactive element
-that is neither described nor listed in `dashboard/src/guide/exempt.ts` with a written reason
-fails too. Renaming a URL parameter fails. Adding a button fails until you say what it is for.
+**Editing it.** The steps are one array in `dashboard/src/guide/tours.ts`. Each step names the
+`anchor` to spotlight, a `title`, a `body`, an optional `note`, and the `routePattern` it lives
+on; `before` actions handle any navigating or clicking needed to reach it. The prose is the only
+thing you need to touch.
+
+**Why it cannot go stale.** Every control the guide describes is bound to a real element by a
+`data-guide` attribute, and a test parses the source and reconciles the two in both directions:
+an attribute with no description fails, a description with no attribute fails, and any
+interactive element that is neither described nor listed in `dashboard/src/guide/exempt.ts` with
+a written reason fails too. Every tour step's target must resolve. Renaming a URL parameter
+fails. `dashboard/scripts/check_guide.py` then walks the whole tour in a real browser against a
+running server.

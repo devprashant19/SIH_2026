@@ -1,8 +1,7 @@
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Button, Drawer } from "@/components/ui/primitives";
 import { CONCEPTS } from "../concepts";
 import { guide } from "../model";
-import { withSearch } from "../nav";
 import { controlsFor, GLOBAL_SCREEN, screenForPath } from "../registry";
 import { useGuideStore } from "../useGuideStore";
 import { ControlCard } from "./ControlCard";
@@ -14,7 +13,6 @@ import { ControlCard } from "./ControlCard";
  */
 export function HelpDrawer({ onShowMe }: { onShowMe: (anchor: string) => void }) {
   const { pathname } = useLocation();
-  const [params] = useSearchParams();
   const helpOpen = useGuideStore((s) => s.helpOpen);
   // A stable action identity, so Drawer's effect runs once per open rather than every render.
   const closeHelp = useGuideStore((s) => s.closeHelp);
@@ -36,13 +34,6 @@ export function HelpDrawer({ onShowMe }: { onShowMe: (anchor: string) => void })
             <Button variant="primary" onClick={() => startTour("onboarding", 0)}>
               Take the guided tour
             </Button>
-            <Link
-              className="rounded-sm border border-border px-2.5 py-1 text-sm hover:bg-surface"
-              onClick={closeHelp}
-              to={{ pathname: "/guide", search: withSearch(params, { guide: screen.id, q: undefined, screen: undefined, kind: undefined, traps: undefined }) }}
-            >
-              Open the full reference
-            </Link>
           </div>
 
           <ul className="space-y-2">
@@ -76,13 +67,7 @@ export function HelpDrawer({ onShowMe }: { onShowMe: (anchor: string) => void })
           </details>
         </div>
       ) : (
-        <p className="text-sm text-muted">
-          There is no guide entry for this path.{" "}
-          <Link className="text-accent hover:underline" to="/guide" onClick={closeHelp}>
-            Open the full reference
-          </Link>
-          .
-        </p>
+        <p className="text-sm text-muted">This path has no guide entry.</p>
       )}
     </Drawer>
   );

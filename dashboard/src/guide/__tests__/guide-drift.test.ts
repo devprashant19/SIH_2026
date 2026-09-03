@@ -174,7 +174,6 @@ describe("guide model", () => {
     config: ["src/features/config/ConfigPage.tsx"],
     audit: ["src/features/audit/AuditPage.tsx"],
     reports: ["src/features/reports/ReportsPage.tsx"],
-    guide: ["src/guide/GuidePage.tsx"],
   };
 
   it("names URL parameters the screen actually uses", () => {

@@ -113,7 +113,7 @@ Built against the approved implementation plan. Gaps are tracked honestly in
 
 ## The screens
 
-Eleven routes, the eleventh being the guide to the other ten. The dashboard is bundled locally, served by the API from the same origin, and
+Ten routes. The dashboard is bundled locally, served by the API from the same origin, and
 references no external host; `dashboard/scripts/check-offline.mjs` fails the build if it
 ever does.
 
@@ -121,13 +121,15 @@ ever does.
 a real browser against the running application, so none of them can drift from what it
 actually renders.
 
-**The tool explains itself.** `/guide` describes all 98 controls: what each one does when you
-use it, and what supervisory idea it demonstrates. Pressing `Shift` + `/` on any screen opens
-the same explanation for whatever you are looking at, and a nine-step guided tour walks the
-drill-down from the portfolio ranking to the alerts behind one finding. A test reconciles
-every description against the running interface in both directions, so a control cannot be
-renamed, or added, without the guide failing the build. There is a written version in
-[`docs/walkthrough.md`](docs/walkthrough.md) as well.
+**The tool explains itself.** A help button fixed at the bottom-left starts a twenty-step
+product tour that runs *on top of* the real screens: everything is dimmed and blurred except
+the control being explained, which keeps a glowing outline and stays clickable, while a popup
+beside it says what the control does and how it is built. Next walks to the next feature,
+navigating between screens on your behalf; Back, Skip and a progress readout are always
+visible. Pressing `Shift` + `/` instead opens a panel describing every control on the screen
+in front of you. A test reconciles all of it against the running interface in both directions,
+so a control cannot be renamed, or added, without the guide failing the build. There is a
+written version in [`docs/walkthrough.md`](docs/walkthrough.md) as well.
 
 | | |
 |---|---|
@@ -139,8 +141,8 @@ renamed, or added, without the guide failing the build. There is a written versi
 | **Negative space.** Expected evidence that is absent, hatched and labelled `ABS`. Click a cell for the three reasons it was expected. | **Configuration.** `t*` recomputes live as you change the cost of being wrong, and the impact is previewed before anything is saved. |
 | ![Audit](docs/screenshots/audit.png) | ![Ingestion](docs/screenshots/ingestion.png) |
 | **Audit.** 55 hash-chained runs, verifiable from the page. | **Ingestion.** Validation counts down to the individual check, because dirty submissions are themselves a finding. |
-| ![Guide](docs/screenshots/guide.png) | ![Help panel](docs/screenshots/help.png) |
-| **Guide.** Every control in the tool, searchable, with the pitfalls collected in one place. | **Help panel.** `Shift` + `/` on any screen, describing the controls in front of you, each with a Show me that points at it. |
+| ![Product tour](docs/screenshots/tour.png) | ![Help panel](docs/screenshots/help.png) |
+| **Product tour.** Twenty steps over the real UI. Everything dims and blurs except the control being explained. | **Help panel.** `Shift` + `/` on any screen, describing the controls in front of you, each with a Show me that points at it. |
 
 | Route | What it shows |
 |---|---|
@@ -154,7 +156,6 @@ renamed, or added, without the guide failing the build. There is a written versi
 | `/ingestion` | Upload, per-submission validation counts down to the check level, and the pipeline stage log. |
 | `/config` | The weights, and the costs with `t* = C_FP / (C_FP + C_FN)` recomputing live as you change them. Preview the effect on every entity before saving. |
 | `/audit` and `/reports` | The hash-chained run log with a verify button, the model registry, and PDF or CSV export. |
-| `/guide` | Every control in the tool: what it does, what it demonstrates, which URL parameter it writes, and what surprises people. Plus the twelve ideas the screens assume. |
 
 The path from portfolio to raw records is three clicks: heatmap cell, finding row, records
 tab.

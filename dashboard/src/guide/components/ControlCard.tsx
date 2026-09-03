@@ -1,6 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/cn";
-import { isResolvedRoute, withSearch } from "../nav";
 import type { AnchorEntry } from "../registry";
 import { KeyChip, KindBadge, ParamChip, TrapNote } from "./chips";
 
@@ -11,39 +9,28 @@ const AVAILABILITY_PREFIX: Record<string, string> = {
   conditional: "Appears when",
 };
 
-/**
- * One control, described. Used by the reference page and, compactly, by the help panel.
- * `onShowMe` is supplied by the help panel; the reference page links instead.
- */
+/** One control, described. Rendered by the help panel; "Show me" spotlights it in place. */
 export function ControlCard({
   entry,
   compact = false,
-  highlighted = false,
   onShowMe,
 }: {
   entry: AnchorEntry;
   compact?: boolean;
-  highlighted?: boolean;
-  onShowMe?: (anchor: string) => void;
+  onShowMe: (anchor: string) => void;
 }) {
-  const { control: c, screen, anchor } = entry;
-  const [params] = useSearchParams();
+  const { control: c, anchor } = entry;
   const availability = c.availability && c.availability !== "always" ? c.availability : null;
 
   return (
     <li
       id={`guide-${anchor}`}
-      // Read by dashboard/scripts/check_guide.py, which uses the rendered reference page as
-      // the model rather than parsing TypeScript from Python.
+      // Read by dashboard/scripts/check_guide.py to enumerate the model from the running app.
       data-anchor={anchor}
       data-availability={c.availability ?? "always"}
       data-in-dom={c.undocumentedInDom ? "no" : "yes"}
       tabIndex={-1}
-      className={cn(
-        "rounded-md border border-border p-3",
-        compact && "p-2",
-        highlighted && "ring-2 ring-accent",
-      )}
+      className={cn("rounded-md border border-border p-3", compact && "p-2")}
     >
       <div className="flex flex-wrap items-baseline gap-2">
         <h3 className={cn("font-semibold", compact ? "text-sm" : "text-base")}>{c.label}</h3>
@@ -89,28 +76,9 @@ export function ControlCard({
       )}
 
       <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-        {onShowMe ? (
-          <button type="button" className="text-accent hover:underline" onClick={() => onShowMe(anchor)}>
-            Show me
-          </button>
-        ) : !screen.chrome && isResolvedRoute(screen.routePattern) ? (
-          <Link
-            className="text-accent hover:underline"
-            to={{
-              pathname: screen.routePattern,
-              search: withSearch(params, { guide: anchor, q: undefined, screen: undefined, kind: undefined, traps: undefined }),
-            }}
-            data-guide="guide.show-me"
-          >
-            Show me on the screen
-          </Link>
-        ) : (
-          !screen.chrome && (
-            // /entities/:entityId and /findings/:findingId need a specific record, so there is
-            // no link that opens them. Say how to get there instead of offering a dead link.
-            <span className="text-muted">Reached by: {screen.reachedBy[0]}</span>
-          )
-        )}
+        <button type="button" className="text-accent hover:underline" onClick={() => onShowMe(anchor)}>
+          Show me
+        </button>
         {(c.reading ?? []).map((r) => (
           <span key={r.path} className="text-muted">
             See <span className="font-mono">{r.path}</span> · {r.title}

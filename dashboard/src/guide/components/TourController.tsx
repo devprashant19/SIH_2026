@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { matchPath, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useUiStore } from "@/state/uiStore";
 import { popLayer, pushLayer } from "../layers";
@@ -12,14 +13,18 @@ import type { Rect } from "../usePlacement";
 import { GuidePopover } from "./GuidePopover";
 import { GuideSpotlight } from "./GuideSpotlight";
 import { HelpDrawer } from "./HelpDrawer";
+import { TourLauncher } from "./TourLauncher";
 
-/** One instance, mounted in AppShell beside <Toasts />. Owns the help panel and the tour. */
+/**
+ * One instance, mounted in AppShell beside <Toasts />. Owns the launcher, the help panel and
+ * the tour. The overlay goes through a portal to document.body so it sits above the whole app
+ * regardless of which screen the target is on, or what stacking context it lives in.
+ */
 export function TourController() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [params] = useSearchParams();
   const reduced = usePrefersReducedMotion();
-  const pushToast = useUiStore((s) => s.pushToast);
 
   const helpOpen = useGuideStore((s) => s.helpOpen);
   const closeHelp = useGuideStore((s) => s.closeHelp);
@@ -252,27 +257,12 @@ export function TourController() {
     navigate({ pathname, search: withSearch(params, { tour: formatTourParam(tour.id, i) }) }, { replace: true });
   }, [tour, stepIndex, goToStep, navigate, pathname, params]);
 
-  // A first-time nudge, never an auto-start. Seizing the screen of someone evaluating a
-  // supervisory tool would be hostile.
-  const nudged = useRef(false);
-  useEffect(() => {
-    if (nudged.current) return;
-    nudged.current = true;
-    const s = useGuideStore.getState();
-    if (s.seenTours.onboarding || s.nudgeDismissed) return;
-    s.dismissNudge();
-    pushToast("New here? Press ? for help on any screen, or open How this works for a guided tour.");
-  }, [pushToast]);
-
   const single = singleAnchor ? BY_ANCHOR.get(singleAnchor) : undefined;
 
-  return (
+  const overlay = active ? (
     <>
-      <HelpDrawer onShowMe={showMe} />
-      {active && (
-        <>
-          <GuideSpotlight rect={rect} padding={step?.padding ?? 6} animate={!reduced} />
-          {single ? (
+      <GuideSpotlight rect={rect} padding={step?.padding ?? 6} animate={!reduced} />
+      {single ? (
             <GuidePopover
               rect={rect}
               title={single.control.label}
@@ -298,6 +288,7 @@ export function TourController() {
                       ? "Press Next to go back to where the tour was, or end it and carry on on your own."
                       : "This step was about a specific record you have navigated away from. End the tour, or press Back to step to somewhere it can reach."
                 }
+                note={onRoute ? step.note : undefined}
                 missingNote={onRoute ? missingNote : undefined}
                 index={stepIndex}
                 total={tour.steps.length}
@@ -315,8 +306,14 @@ export function TourController() {
               />
             )
           )}
-        </>
-      )}
+    </>
+  ) : null;
+
+  return (
+    <>
+      <TourLauncher />
+      <HelpDrawer onShowMe={showMe} />
+      {overlay && createPortal(overlay, document.body)}
     </>
   );
 }
