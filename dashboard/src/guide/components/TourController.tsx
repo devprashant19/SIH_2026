@@ -45,6 +45,10 @@ export function TourController() {
   // navigates, which re-runs the effect, and without this the tour would click again or
   // wait pointlessly for a control that only existed on the previous screen.
   const doneActions = useRef<Set<string>>(new Set());
+  // The concrete path each step resolved on. Steps that live on a record-specific route, such
+  // as /findings/:findingId, cannot be reached from their pattern, so Back returns to the URL
+  // the tour actually used on the way forward.
+  const visitedPath = useRef<Map<number, string>>(new Map());
 
   const tour = tourId && tourId !== "__single" ? TOUR_BY_ID.get(tourId) : undefined;
   const step: TourStep | undefined = tour?.steps[stepIndex];
@@ -79,6 +83,7 @@ export function TourController() {
       setNavCollapsedAtStart(null);
       endTour(reason);
       doneActions.current.clear();
+      visitedPath.current.clear();
       setSingleAnchor(null);
       setRect(null);
       navigate({ pathname, search: withSearch(params, { tour: undefined }) }, { replace: true });
@@ -139,6 +144,21 @@ export function TourController() {
         if (ui.navCollapsed) ui.toggleNav();
       }
 
+      // A step always lands on its own route. Going Back from a later screen would otherwise
+      // leave the previous step stranded on the wrong page, because only some steps carry an
+      // explicit navigate action. Patterns with a :param cannot be resolved to a URL, so those
+      // still rely on their before actions and fall through to the off-route popup.
+      if (step && !matchPath({ path: step.routePattern, end: true }, pathname)) {
+        const target = isResolvedRoute(step.routePattern) ? step.routePattern : visitedPath.current.get(stepIndex);
+        if (target) {
+          navigate(
+            { pathname: target, search: withSearch(params, { tour: formatTourParam(tourId!, stepIndex) }) },
+            { replace: true },
+          );
+          return; // the navigation re-runs this effect
+        }
+      }
+
       for (const action of step?.before ?? []) {
         if (cancelled) return;
         if (action.type === "navigate" && !matchPath({ path: action.to, end: true }, pathname)) {
@@ -191,6 +211,7 @@ export function TourController() {
       }
 
       el.scrollIntoView({ block: "center", inline: "nearest", behavior: reduced ? "auto" : "smooth" });
+      if (step) visitedPath.current.set(stepIndex, pathname);
       setRect(rectOf(el));
     };
 

@@ -58,6 +58,13 @@ export const GUIDE: readonly GuideScreen[] = [
         concepts: ["provenance-chain"],
       },
       {
+        id: "theme",
+        label: "Toggle theme",
+        kind: "button",
+        does: "Switches between the light and dark palette, and remembers the choice for next time.",
+        demonstrates: "Supervisory review happens in daylight offices and in operations centres. Both palettes carry the same risk colours at the same meanings, so a finding reads identically either way.",
+      },
+      {
         id: "help",
         label: "Help for this screen",
         kind: "button",

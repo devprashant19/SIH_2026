@@ -176,6 +176,8 @@ Present on every screen:
 - **Provenance chip**, top right: `v0.1.0 · code e65f0806 · config 677c7fee · last run …`.
   Click it to jump to the audit log. This is the answer to "which version produced what I am
   looking at", visible without asking.
+- **Theme toggle**, top right, switching between the light and dark palette and remembering
+  the choice. Both palettes carry the same risk colours at the same meanings.
 - **Help button** (`?`), top right beside the provenance chip, or `Shift` + `/` from
   anywhere outside a text field. Opens a panel describing every control on the screen you are
   currently looking at.

@@ -65,7 +65,7 @@ export function AppShell() {
           ))}
         </ul>
         {!collapsed && (
-          <div className="mt-auto p-3 text-xs text-muted">
+          <div className="mt-auto p-3 pb-16 text-xs text-muted">
             <p>Supervisory analytics aid. Findings are indicators for examiner review, not conclusions.</p>
           </div>
         )}

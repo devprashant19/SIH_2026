@@ -33,6 +33,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
+      data-guide="global.theme"
       onClick={cycleTheme}
       className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-muted backdrop-blur transition-all duration-200 hover:bg-surface hover:text-text hover:shadow-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent"
       title={`Theme: ${theme} (Click to change)`}
