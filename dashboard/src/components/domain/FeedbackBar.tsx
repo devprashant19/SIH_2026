@@ -48,6 +48,10 @@ export function FeedbackBar({ targetType, targetId, status, compact }: { targetT
       className="flex flex-wrap items-center gap-2"
       onKeyDown={(e) => {
         if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        // The shortcuts are bar-wide by design, so A means Accept even while Reject has focus.
+        // Guard modifiers and auto-repeat so a held key or a browser chord cannot record a
+        // decision the examiner did not intend.
+        if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
         const key = e.key.toLowerCase();
         if (key === "a") submit("ACCEPT");
         if (key === "r") submit("REJECT");
