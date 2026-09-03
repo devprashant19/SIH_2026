@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAlert, useEvidence, useFinding } from "@/api/hooks";
 import { ContributionBar, BulletBar, ThresholdLine } from "@/components/charts/primitives";
@@ -19,6 +19,9 @@ export function FindingPage() {
   const [tab, setTab] = useSearchParamState("tab", "evidence");
   const [offset, setOffset] = useState(0);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+  const revealRow = useCallback((el: HTMLTableRowElement | null) => {
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, []);
   const [openAlert, setOpenAlert] = useState<AlertRecord | null>(null);
   const finding = useFinding(findingId);
   const evidence = useEvidence(findingId, PAGE, offset, "ttc");
@@ -116,7 +119,17 @@ export function FindingPage() {
                     </thead>
                     <tbody>
                       {f.evidence_features.map((e) => (
-                        <tr key={e.name} className={selectedFeature === e.name ? "bg-accent-bg" : "border-b border-border"} onClick={() => setSelectedFeature(e.name)}>
+                        <tr
+                          key={e.name}
+                          // The ref moves when the selection changes, so this fires exactly once
+                          // per selection and brings the row into view after a jump from the
+                          // model-attribution tab.
+                          ref={selectedFeature === e.name ? revealRow : undefined}
+                          tabIndex={0}
+                          className={selectedFeature === e.name ? "bg-accent-bg" : "border-b border-border"}
+                          onClick={() => setSelectedFeature(e.name)}
+                          onKeyDown={(ev) => ev.key === "Enter" && setSelectedFeature(e.name)}
+                        >
                           <td className="cursor-pointer px-2 py-1.5">{e.label}</td>
                           <td className="tabular px-2 py-1.5 font-medium">{fmt2(e.value)}</td>
                           <td className="tabular px-2 py-1.5 text-muted">{fmt2(e.peer_median)}</td>
@@ -148,16 +161,30 @@ export function FindingPage() {
                 {f.shap && (
                   <Card title="Model attribution" actions={<span className="text-xs text-muted">{f.shap.method === "shap_tree_isolation_forest" ? "SHAP on the isolation forest" : "peer z-score attribution"}</span>}>
                     <ul className="space-y-1.5">
-                      {f.shap.contributions.map((c: ShapContribution & { label?: string }) => (
-                        <li key={c.feature} className="grid grid-cols-[minmax(140px,1fr)_80px_1fr] items-center gap-2 text-sm">
-                          <span className="truncate" title={c.feature}>{c.label ?? c.feature}</span>
-                          <span className="tabular text-xs text-muted">{c.value == null ? "—" : fmt2(c.value)}</span>
-                          <span className="flex items-center gap-2">
-                            <ContributionBar value={c.shap} scale={shapScale} />
-                            <span className="tabular w-12 text-right text-xs">{c.shap >= 0 ? "+" : ""}{fmt2(c.shap)}</span>
-                          </span>
-                        </li>
-                      ))}
+                      {f.shap.contributions.map((c: ShapContribution & { label?: string }) => {
+                        const inEvidence = f.evidence_features.some((e) => e.name === c.feature);
+                        return (
+                          <li key={c.feature}>
+                            <button
+                              type="button"
+                              disabled={!inEvidence}
+                              onClick={() => {
+                                setSelectedFeature(c.feature);
+                                setTab("evidence");
+                              }}
+                              title={inEvidence ? "Show this feature's value against the peer group" : "This feature has no peer comparison on this finding"}
+                              className="grid w-full grid-cols-[minmax(140px,1fr)_80px_1fr] items-center gap-2 rounded-sm px-1 py-0.5 text-left text-sm enabled:hover:bg-accent-bg disabled:cursor-default"
+                            >
+                              <span className="truncate" title={c.feature}>{c.label ?? c.feature}</span>
+                              <span className="tabular text-xs text-muted">{c.value == null ? "—" : fmt2(c.value)}</span>
+                              <span className="flex items-center gap-2">
+                                <ContributionBar value={c.shap} scale={shapScale} />
+                                <span className="tabular w-12 text-right text-xs">{c.shap >= 0 ? "+" : ""}{fmt2(c.shap)}</span>
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
                     {f.what_would_change && <p className="mt-3 text-sm text-muted">{f.what_would_change}</p>}
                   </Card>
