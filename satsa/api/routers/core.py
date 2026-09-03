@@ -86,10 +86,12 @@ def entity_features(entity_id: str, period: str | None = None, conn=Depends(get_
 
 
 @router.get("/findings")
-def findings(period: str | None = None, entity_id: str | None = None, module: str | None = None, decision: str | None = None, rule_id: str | None = None,
-             control_id: str | None = None, min_p: float | None = None, dimension: str | None = None, status: str | None = None, sort: str = "priority",
+def findings(period: str | None = None, entity_id: str | None = None, sector: str | None = None, module: str | None = None, decision: str | None = None, rule_id: str | None = None,
+             control_id: str | None = None, min_p: float | None = None, dimension: str | None = None, capability: str | None = None,
+             status: str | None = None, sort: str = "priority",
              limit: int = Query(50, le=10_000), offset: int = 0, conn=Depends(get_reader)) -> dict:
-    return q.list_findings(conn, period=period, entity_id=entity_id, module=module, decision=decision, rule_id=rule_id, control_id=control_id, min_p=min_p, dimension=dimension, status=status, sort=sort, limit=limit, offset=offset)
+    return q.list_findings(conn, period=period, entity_id=entity_id, sector=sector, module=module, decision=decision, rule_id=rule_id, control_id=control_id, min_p=min_p,
+                           dimension=dimension, capability=capability, status=status, sort=sort, limit=limit, offset=offset)
 
 
 @router.get("/findings/{finding_id}")

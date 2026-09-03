@@ -198,9 +198,9 @@ def dimension_for(finding: dict[str, Any]) -> str:
     return "execution_gap"
 
 
-def list_findings(conn: duckdb.DuckDBPyConnection, *, period: str | None, run_ids: list[str] | None = None, entity_id: str | None = None, module: str | None = None,
+def list_findings(conn: duckdb.DuckDBPyConnection, *, period: str | None, run_ids: list[str] | None = None, entity_id: str | None = None, sector: str | None = None, module: str | None = None,
                   decision: str | None = None, rule_id: str | None = None, control_id: str | None = None, min_p: float | None = None, dimension: str | None = None,
-                  status: str | None = None, sort: str = "priority", limit: int = 50, offset: int = 0) -> dict[str, Any]:
+                  capability: str | None = None, status: str | None = None, sort: str = "priority", limit: int = 50, offset: int = 0) -> dict[str, Any]:
     if run_ids is None:
         p, run_id = current_run(conn, period)
         run_ids = [run_id] if run_id else []
@@ -209,6 +209,8 @@ def list_findings(conn: duckdb.DuckDBPyConnection, *, period: str | None, run_id
     where, params = [f"f.run_id IN ({','.join('?' * len(run_ids))})"], list(run_ids)
     if entity_id:
         where.append("f.entity_id = ?"); params.append(entity_id)
+    if sector:
+        where.append("e.sector = ?"); params.append(sector)
     if module:
         where.append("f.module = ?"); params.append(module)
     if decision:
@@ -217,6 +219,8 @@ def list_findings(conn: duckdb.DuckDBPyConnection, *, period: str | None, run_id
         where.append("f.rule_id = ?"); params.append(rule_id)
     if control_id:
         where.append("f.control_id = ?"); params.append(control_id)
+    if capability:
+        where.append("f.capability = ?"); params.append(capability)
     if min_p is not None:
         where.append("f.p_final >= ?"); params.append(min_p)
     order = {"priority": "f.priority_rank", "p": "f.p_final DESC", "entity": "f.entity_id, f.priority_rank", "recent": "f.created_at DESC"}.get(sort, "f.priority_rank")

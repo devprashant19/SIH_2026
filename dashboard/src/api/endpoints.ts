@@ -8,8 +8,8 @@ import type {
 } from "./types";
 
 export type FindingFilters = {
-  period?: string; entity_id?: string; module?: string; decision?: string; rule_id?: string;
-  control_id?: string; min_p?: number; dimension?: string; status?: string; sort?: string;
+  period?: string; entity_id?: string; sector?: string; module?: string; decision?: string; rule_id?: string;
+  control_id?: string; min_p?: number; dimension?: string; capability?: string; status?: string; sort?: string;
   limit?: number; offset?: number;
 };
 
