@@ -48,7 +48,8 @@ export const useTrendEntity = (id: string, start?: string, end?: string) =>
   useQuery({ queryKey: qk.trendEntity(id, start, end), queryFn: () => endpoints.trendEntity(id, start, end), enabled: !!id });
 export const useTrendSector = (sector?: string, start?: string, end?: string) =>
   useQuery({ queryKey: qk.trendSector(sector, start, end), queryFn: () => endpoints.trendSector(sector, start, end) });
-export const useTrendControls = () => useQuery({ queryKey: qk.trendControls(), queryFn: () => endpoints.trendControls() });
+export const useTrendControls = (end?: string) =>
+  useQuery({ queryKey: [...qk.trendControls(), end], queryFn: () => endpoints.trendControls(undefined, end) });
 
 export const useSubmissions = (period?: string, entityId?: string) =>
   useQuery({ queryKey: qk.submissions(period, entityId), queryFn: () => endpoints.submissions(period, entityId) });

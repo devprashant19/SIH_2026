@@ -4,22 +4,29 @@ import { FilterBar, FilterSelect } from "@/components/data/FilterBar";
 import { SectorPicker } from "@/components/data/Pickers";
 import { Card, QueryBoundary } from "@/components/ui/primitives";
 import { DIMENSION_LABELS } from "@/components/charts/RiskHeatmap";
-import { useSearchParamState } from "@/state/useSearchParamState";
+import { periodOrUndefined, usePeriodParam, useSearchParamState } from "@/state/useSearchParamState";
 import type { SriDimension } from "@/api/types";
 
 export function TrendsPage() {
+  const [period] = usePeriodParam();
   const [sector] = useSearchParamState("sector", "");
   const [entity] = useSearchParamState("entity", "");
   const entities = useEntities();
-  const sectorTrend = useTrendSector(sector || undefined);
-  const entityTrend = useTrendEntity(entity || "");
-  const controls = useTrendControls();
+  // A trend spans periods, so the global picker cannot select one. It sets the end of the
+  // range instead: every series runs from the first period up to the one selected.
+  const end = periodOrUndefined(period);
+  const sectorTrend = useTrendSector(sector || undefined, undefined, end);
+  const entityTrend = useTrendEntity(entity || "", undefined, end);
+  const controls = useTrendControls(end);
 
   return (
     <div className="space-y-4">
       <header>
         <h1 className="text-xl font-semibold">Trends</h1>
-        <p className="text-sm text-muted">How supervisory risk moves across submission periods, for the portfolio and for a single entity.</p>
+        <p className="text-sm text-muted">
+          How supervisory risk moves across submission periods, for the portfolio and for a single entity. A trend spans
+          periods, so the period selector sets where each series ends rather than picking a single one.
+        </p>
       </header>
 
       <FilterBar>
