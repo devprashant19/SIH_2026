@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFindings, useHeatmap, useSummary } from "@/api/hooks";
 import { RiskHeatmap } from "@/components/charts/RiskHeatmap";
 import { FilterBar } from "@/components/data/FilterBar";
@@ -60,7 +60,15 @@ export function PortfolioPage() {
                 rows={h.rows}
                 lens={h.lens}
                 period={period}
-                onCellClick={(entityId, key) => navigate({ pathname: `/entities/${entityId}`, search: `?period=${period}&dimension=${encodeURIComponent(key)}` })}
+                // Under the capability lens the column key is a capability name, not an SRI
+                // dimension, so it has to go into a different parameter or the entity page
+                // filters on a value that can never match.
+                onCellClick={(entityId, key) =>
+                  navigate({
+                    pathname: `/entities/${entityId}`,
+                    search: `?period=${period}&${h.lens === "capability" ? "capability" : "dimension"}=${encodeURIComponent(key)}`,
+                  })
+                }
               />
             ) : (
               <p className="text-sm text-muted">No scored entities for this period. Ingest submissions and run the pipeline from the ingestion screen.</p>
@@ -69,7 +77,7 @@ export function PortfolioPage() {
         </QueryBoundary>
       </Card>
 
-      <Card title="Prioritised review queue" actions={<a className="text-sm text-accent hover:underline" href={`/findings?period=${period}&status=open`}>See all findings</a>}>
+      <Card title="Prioritised review queue" actions={<Link className="text-sm text-accent hover:underline" to={`/findings?period=${period}&status=open`}>See all findings</Link>}>
         <QueryBoundary query={queue} rows={6}>
           {(q) => <FindingsTable items={q.items} period={period} showEntity emptyHint="Nothing awaiting review for this period." />}
         </QueryBoundary>
