@@ -6,7 +6,7 @@ import { fmtProb } from "@/lib/format";
 import type { FindingListItem } from "@/api/types";
 import { DIMENSION_LABELS } from "@/components/charts/RiskHeatmap";
 
-export function FindingsTable({ items, period, showEntity = false, emptyHint }: { items: FindingListItem[]; period: string; showEntity?: boolean; emptyHint?: string }) {
+export function FindingsTable({ items, period, showEntity = false, emptyHint, tableGuide, firstRowGuide }: { items: FindingListItem[]; period: string; showEntity?: boolean; emptyHint?: string; tableGuide?: string; firstRowGuide?: string }) {
   const navigate = useNavigate();
   const columns: ColumnDef<FindingListItem, any>[] = [
     { accessorKey: "priority_rank", header: "#", cell: (c) => <span className="tabular text-muted">{c.getValue<number>()}</span>, size: 40 },
@@ -28,6 +28,8 @@ export function FindingsTable({ items, period, showEntity = false, emptyHint }: 
       onRowClick={(r) => navigate({ pathname: `/findings/${r.finding_id}`, search: `?period=${period}` })}
       emptyTitle="No findings for these filters"
       emptyHint={emptyHint}
+      tableGuide={tableGuide}
+      firstRowGuide={firstRowGuide}
       initialSort={[{ id: "priority_rank", desc: false }]}
     />
   );

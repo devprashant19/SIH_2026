@@ -10,7 +10,7 @@ export function PeriodPicker() {
       <label htmlFor="period-picker" className="text-muted">
         Period
       </label>
-      <Select id="period-picker" value={period} onChange={(e) => setPeriod(e.target.value)} data-testid="period-picker">
+      <Select id="period-picker" value={period} onChange={(e) => setPeriod(e.target.value)} data-testid="period-picker" data-guide="global.period">
         <option value="latest">Latest</option>
         {(data ?? []).map((p) => (
           <option key={p.period} value={p.period}>
@@ -22,7 +22,7 @@ export function PeriodPicker() {
   );
 }
 
-export function EntityPicker({ param = "entity", label = "Entity" }: { param?: string; label?: string }) {
+export function EntityPicker({ param = "entity", label = "Entity", guide = "shared.entity" }: { param?: string; label?: string; guide?: string }) {
   const { data } = useEntities();
   const [value, setValue] = useSearchParamState(param, "");
   const id = `entity-${param}`;
@@ -31,7 +31,7 @@ export function EntityPicker({ param = "entity", label = "Entity" }: { param?: s
       <label htmlFor={id} className="text-muted">
         {label}
       </label>
-      <Select id={id} value={value} onChange={(e) => setValue(e.target.value)}>
+      <Select id={id} value={value} onChange={(e) => setValue(e.target.value)} data-guide={guide}>
         <option value="">All</option>
         {(data ?? []).map((e) => (
           <option key={e.entity_id} value={e.entity_id}>
@@ -52,7 +52,7 @@ export function SectorPicker() {
       <label htmlFor="sector-picker" className="text-muted">
         Sector
       </label>
-      <Select id="sector-picker" value={value} onChange={(e) => setValue(e.target.value)}>
+      <Select id="sector-picker" value={value} onChange={(e) => setValue(e.target.value)} data-guide="shared.sector">
         <option value="">All</option>
         {sectors.map((s) => (
           <option key={s} value={s}>

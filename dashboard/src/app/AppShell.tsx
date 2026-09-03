@@ -2,6 +2,8 @@ import { NavLink, Outlet, useSearchParams } from "react-router-dom";
 import { useHealth, usePipelineStatus } from "@/api/hooks";
 import { PeriodPicker } from "@/components/data/Pickers";
 import { Toasts } from "@/components/ui/primitives";
+import { HelpButton } from "@/guide/components/HelpDrawer";
+import { TourController } from "@/guide/components/TourController";
 import { cn } from "@/lib/cn";
 import { fmtDateTime, shortHash } from "@/lib/format";
 import { useUiStore } from "@/state/uiStore";
@@ -29,11 +31,11 @@ export function AppShell() {
               SAT-SA
             </span>
           )}
-          <button type="button" onClick={toggleNav} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} className="rounded-sm px-2 py-1 text-muted hover:bg-accent-bg hover:text-accent">
+          <button type="button" onClick={toggleNav} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-guide="global.nav-toggle" className="rounded-sm px-2 py-1 text-muted hover:bg-accent-bg hover:text-accent">
             {collapsed ? "»" : "«"}
           </button>
         </div>
-        <ul className="flex flex-col gap-0.5 px-2">
+        <ul className="flex flex-col gap-0.5 px-2" data-guide="global.nav">
           {NAV_ITEMS.map((item) => (
             <li key={item.key}>
               <NavLink
@@ -56,16 +58,20 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border px-4">
           <PeriodPicker />
-          <NavLink to={{ pathname: "/audit", search }} className="text-xs text-muted hover:text-accent" title="Provenance of the current results">
+          <span className="flex items-center gap-3">
+            <HelpButton />
+            <NavLink to={{ pathname: "/audit", search }} className="text-xs text-muted hover:text-accent" title="Provenance of the current results" data-guide="global.provenance">
             {health.data ? `v${health.data.app_version} · code ${shortHash(health.data.code_hash)} · config ${shortHash(health.data.config_hash)}` : "loading…"}
-            {lastRun ? ` · last run ${fmtDateTime(lastRun.finished_at)}` : ""}
-          </NavLink>
+              {lastRun ? ` · last run ${fmtDateTime(lastRun.finished_at)}` : ""}
+            </NavLink>
+          </span>
         </header>
         <main id="main" className="min-w-0 flex-1 overflow-auto p-4">
           <Outlet />
         </main>
       </div>
       <Toasts />
+      <TourController />
     </div>
   );
 }

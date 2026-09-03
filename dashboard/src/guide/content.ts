@@ -372,6 +372,17 @@ export const GUIDE: readonly GuideScreen[] = [
         demonstrates: "Every score on this screen resolves to a list of named findings, each of which resolves to evidence.",
       },
       {
+        id: "findings-first-row",
+        label: "The highest-priority finding",
+        kind: "table-row",
+        availability: "requires-data",
+        revealedBy: "entity.findings",
+        navigatesTo: "/findings/:findingId",
+        requires: "the entity has at least one finding matching the filters",
+        does: "Opens that finding with its rationale, evidence and the raw alerts behind it.",
+        demonstrates: "The table is sorted by priority, so the top row is where this entity's supervisory attention should start.",
+      },
+      {
         id: "export-pdf",
         label: "Export PDF",
         kind: "button",
