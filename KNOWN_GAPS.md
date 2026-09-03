@@ -104,19 +104,24 @@ feature building.
 
 ---
 
-## 7. No frontend tests, no screenshots, no accessibility audit
+## 7. No frontend unit tests, and no accessibility audit
 
-**What is wrong.** The dashboard has zero automated tests despite Vitest and Testing Library
-being configured. No screenshots are generated, so the README describes screens in a table
-rather than showing them. The accessibility work was designed in but never audited with a
+**What is wrong.** The dashboard has no Vitest tests despite Vitest and Testing Library being
+configured. The accessibility work was designed in, colour is never the only cue, every chart
+carries a hidden data table, focus rings are preserved, but it has never been audited with a
 tool.
 
-**Why it matters.** Screenshots and a demo video are named deliverables. Accessibility
-claims in the design notes are currently untested assertions.
+**What has since been done.** All eleven routes are loaded in a real browser and checked for
+console errors, failed requests and rendered content, and the three-click drill-down is
+exercised end to end. That pass found two defects, both fixed: a rule finding described its
+score as "uncalibrated" when no model was involved, and two heatmap columns shared the
+heading "Trend". `dashboard/scripts/screenshots.py` regenerates every README image from the
+running application.
 
-**The fix.** Smoke tests for each route against mocked responses; headless-browser screenshot
-generation driven from the built UI so images cannot drift from what the application renders;
-an axe pass on each route.
+**Why the rest still matters.** A browser smoke pass is not a unit test suite; it catches
+crashes, not wrong values. An axe pass would replace assertion with measurement.
+
+**The fix.** Vitest render tests per route against mocked responses, and axe on each route.
 
 ---
 

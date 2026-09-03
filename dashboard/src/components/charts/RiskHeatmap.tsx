@@ -44,7 +44,7 @@ export function RiskHeatmap({ rows, lens, period, onCellClick }: { rows: Heatmap
               </th>
             ))}
             <th scope="col" className="border-b border-border px-2 py-1.5 text-left">Findings</th>
-            <th scope="col" className="border-b border-border px-2 py-1.5 text-left">Trend</th>
+            <th scope="col" className="border-b border-border px-2 py-1.5 text-left" title="Supervisory risk indicator over the last six submission periods">6-period history</th>
           </tr>
         </thead>
         <tbody>

@@ -104,8 +104,21 @@ Ten routes. The dashboard is bundled locally, served by the API from the same or
 references no external host; `dashboard/scripts/check-offline.mjs` fails the build if it
 ever does.
 
-Screenshots are not generated yet, which is why this section is a table rather than a grid.
-That is listed in `KNOWN_GAPS.md` rather than quietly omitted.
+`dashboard/scripts/screenshots.py` regenerates every image below by driving the built UI in
+a real browser against the running application, so none of them can drift from what it
+actually renders. A step-by-step tour of every feature is in
+[`docs/walkthrough.md`](docs/walkthrough.md).
+
+| | |
+|---|---|
+| ![Portfolio](docs/screenshots/portfolio.png) | ![Entity](docs/screenshots/entity.png) |
+| **Portfolio.** Eight entities ranked by supervisory priority, not by raw score. Every cell carries its number, so colour is never the only cue. | **Entity.** The risk indicator as arithmetic: score, weight and contribution per dimension, summing in front of you, with a confidence that says how much evidence it had. |
+| ![Finding](docs/screenshots/finding.png) | ![Raw records](docs/screenshots/records.png) |
+| **Finding.** One sentence with real numbers, the threshold it was measured against, and the evidence beside the peer band. | **Raw records.** The twenty alerts behind the claim. Three clicks from the portfolio. |
+| ![Negative space](docs/screenshots/coverage.png) | ![Configuration](docs/screenshots/config.png) |
+| **Negative space.** Expected evidence that is absent, hatched and labelled `ABS`. Click a cell for the three reasons it was expected. | **Configuration.** `t*` recomputes live as you change the cost of being wrong, and the impact is previewed before anything is saved. |
+| ![Audit](docs/screenshots/audit.png) | ![Ingestion](docs/screenshots/ingestion.png) |
+| **Audit.** 55 hash-chained runs, verifiable from the page. | **Ingestion.** Validation counts down to the individual check, because dirty submissions are themselves a finding. |
 
 | Route | What it shows |
 |---|---|
@@ -480,4 +493,5 @@ deployment is a procurement problem rather than a technical one.
 
 - [`docs/architecture.md`](docs/architecture.md) — system design, data flow, deployment
 - [`docs/model_card.md`](docs/model_card.md) — models, hardware, training, update mechanism, known limitations
+- [`docs/walkthrough.md`](docs/walkthrough.md) — local setup from nothing, then every feature screen by screen
 - [`KNOWN_GAPS.md`](KNOWN_GAPS.md) — what is not done, and what is claimed more strongly than the evidence supports

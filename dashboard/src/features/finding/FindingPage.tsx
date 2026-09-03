@@ -60,7 +60,13 @@ export function FindingPage() {
               <p className="max-w-4xl text-sm">{f.rationale}</p>
               <div className="flex flex-wrap items-center gap-4 text-xs text-muted">
                 <span>p = {fmtProb(f.p_final)}{f.p_rule != null && ` (rules ${fmtProb(f.p_rule)}`}{f.p_ml != null && `, model ${fmtProb(f.p_ml)}`}{f.p_rule != null && ")"}</span>
-                <span>{f.calibrated ? "calibrated probability" : "uncalibrated score — no labelled feedback yet"}</span>
+                <span title={f.p_ml == null ? "This finding comes from a deterministic rule, so there is no model probability to calibrate." : undefined}>
+                  {f.p_ml == null
+                    ? "rule score, no model involved"
+                    : f.calibrated
+                      ? "calibrated model probability"
+                      : "uncalibrated model score — too few labelled decisions yet"}
+                </span>
                 <span>expected cost if missed: {fmt2(f.expected_cost)}</span>
                 <span>{f.n_evidence_alerts} evidence alerts</span>
               </div>
