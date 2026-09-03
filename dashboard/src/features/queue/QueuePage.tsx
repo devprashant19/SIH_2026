@@ -24,7 +24,7 @@ export function QueuePage() {
   const [selected, setSelected] = useState<QueueItem | null>(null);
   const p = periodOrUndefined(period);
   const queue = useQueue({ period: p, entity_id: entity || undefined, sector: sector || undefined, decision: decision || undefined, limit: 500 });
-  const findings = useFindings({ period: p, entity_id: entity || undefined, decision: decision || undefined, status: "open", limit: 500 }, { enabled: scope === "entity" });
+  const findings = useFindings({ period: p, entity_id: entity || undefined, sector: sector || undefined, decision: decision || undefined, status: "open", limit: 500 }, { enabled: scope === "entity" });
   const controls = useControls(p, sector || undefined);
   const detail = useQueueItem(selected?.flag_id);
 
