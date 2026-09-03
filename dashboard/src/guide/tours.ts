@@ -89,7 +89,13 @@ export const TOURS: readonly TourDefinition[] = [
         title: "A decision is a position on a line",
         body: "The threshold comes from what the two mistakes cost, not from a guess. The shaded band around it is the region handed to a human. This finding's probability is marked, so you can see how close to the boundary it fell.",
         routePattern: "/findings/:findingId",
-        before: [{ type: "click", anchor: "entity.findings-first-row" }],
+        before: [
+          // The heatmap cell arrives with a dimension filter set, which can leave the
+          // findings table empty. Clear it before asking for the top row.
+          { type: "setParam", key: "dimension" },
+          { type: "setParam", key: "capability" },
+          { type: "click", anchor: "entity.findings-first-row" },
+        ],
         onMissing: "wait",
         prefer: ["bottom"],
       },

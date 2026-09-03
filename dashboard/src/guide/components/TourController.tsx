@@ -32,13 +32,19 @@ export function TourController() {
 
   const [rect, setRect] = useState<Rect | null>(null);
   const [missingNote, setMissingNote] = useState<string | undefined>(undefined);
+  // Off-route is only meaningful once the step has finished navigating and resolving.
+  const [preparing, setPreparing] = useState(false);
   const [singleAnchor, setSingleAnchor] = useState<string | null>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
+  // Synthetic clicks already performed, keyed by tour, step and anchor. A click usually
+  // navigates, which re-runs the effect, and without this the tour would click again or
+  // wait pointlessly for a control that only existed on the previous screen.
+  const doneActions = useRef<Set<string>>(new Set());
 
   const tour = tourId && tourId !== "__single" ? TOUR_BY_ID.get(tourId) : undefined;
   const step: TourStep | undefined = tour?.steps[stepIndex];
   const active = !!tourId;
-  const onRoute = !step || !!matchPath({ path: step.routePattern, end: true }, pathname);
+  const onRoute = preparing || !step || !!matchPath({ path: step.routePattern, end: true }, pathname);
 
   // ---- keyboard: Shift+/ opens help, guarded against text fields -------------------------
   useEffect(() => {
@@ -67,6 +73,7 @@ export function TourController() {
       if (navCollapsedAtStart !== null && ui.navCollapsed !== navCollapsedAtStart) ui.toggleNav();
       setNavCollapsedAtStart(null);
       endTour(reason);
+      doneActions.current.clear();
       setSingleAnchor(null);
       setRect(null);
       navigate({ pathname, search: withSearch(params, { tour: undefined }) }, { replace: true });
@@ -93,8 +100,12 @@ export function TourController() {
     if (parsed && TOUR_BY_ID.has(parsed.id)) {
       if (s.tourId !== parsed.id) s.startTour(parsed.id, parsed.step);
       else if (s.stepIndex !== parsed.step) s.goToStep(parsed.step);
+    } else if (s.tourId && s.tourId !== "__single") {
+      // The app navigated on its own, for instance a heatmap cell opening an entity, and
+      // rebuilt the query string without the tour. Put it back so a reload still resumes.
+      navigate({ pathname, search: withSearch(params, { tour: formatTourParam(s.tourId, s.stepIndex) }) }, { replace: true });
     }
-  }, [params]);
+  }, [params, pathname, navigate]);
 
   // Remember the nav state so a tour that expands the rail can put it back.
   useEffect(() => {
@@ -114,6 +125,7 @@ export function TourController() {
 
     const run = async () => {
       setMissingNote(undefined);
+      setPreparing(true);
 
       // The nav rail keeps its links when collapsed, but a tour that points at one should
       // show the label it is naming.
@@ -129,13 +141,27 @@ export function TourController() {
           return; // the navigation re-runs this effect
         }
         if (action.type === "setParam") {
-          navigate({ pathname, search: withSearch(params, { [action.key]: action.value }) }, { replace: true });
-          return;
+          // Only navigate when the value actually changes, or the effect re-runs for ever.
+          const current = params.get(action.key);
+          const wanted = action.value ?? null;
+          if (current !== wanted && !(current === null && wanted === null)) {
+            navigate({ pathname, search: withSearch(params, { [action.key]: action.value }) }, { replace: true });
+            return;
+          }
         }
         if (action.type === "click") {
+          const key = `${tourId}.${stepIndex}.${action.anchor}`;
+          if (doneActions.current.has(key)) continue;
           // Synthesised so a step can open a drawer or drill into a row on the user's behalf.
-          // If it fails, onMissing takes over rather than the tour hanging.
-          resolveAnchor(action.anchor)?.click();
+          // The target usually sits behind a query, so wait for it rather than clicking into a
+          // skeleton. If it never appears, onMissing takes over and the tour does not hang.
+          const target = await waitForAnchor(action.anchor, 2500).promise;
+          if (cancelled) return;
+          doneActions.current.add(key);
+          if (target) {
+            target.click();
+            return; // a click usually navigates; let the effect re-run on the new route
+          }
         }
       }
 
@@ -148,6 +174,7 @@ export function TourController() {
       const el = await waiter.promise;
       if (cancelled) return;
 
+      setPreparing(false);
       if (!el) {
         if (policy === "skip" && step && tour && stepIndex + 1 < tour.steps.length) {
           goToStep(stepIndex + 1);
