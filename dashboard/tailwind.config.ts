@@ -36,7 +36,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Consolas", "Menlo", "monospace"],
       },
       fontSize: {
@@ -46,10 +46,29 @@ export default {
         md: ["16px", "24px"],
         lg: ["18px", "26px"],
         xl: ["22px", "28px"],
-        num: ["28px", "32px"],
+        num: ["32px", "36px"],
       },
-      borderRadius: { sm: "4px", md: "6px" },
-      boxShadow: { drawer: "0 4px 16px rgba(0,0,0,0.08)" },
+      borderRadius: { sm: "6px", md: "12px", lg: "16px" },
+      boxShadow: { 
+        drawer: "0 4px 24px rgba(0,0,0,0.15)",
+        glow: "0 0 20px var(--color-accent)",
+        surface: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-out forwards',
+        'slide-up': 'slideUp 0.4s ease-out forwards',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
+      },
       // One named stacking order for every overlay in the app. The guide layers sit above
       // the drawer and the toasts so a tour can spotlight a control inside an open drawer.
       zIndex: {

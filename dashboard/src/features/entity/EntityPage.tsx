@@ -60,9 +60,13 @@ export function EntityPage() {
                   </Link>{" "}
                   / {d.entity.entity_id}
                 </nav>
-                <h1 className="text-xl font-semibold">{d.entity.name}</h1>
-                <p className="text-sm text-muted">
-                  {d.entity.entity_id} · {d.entity.sector} · size {d.entity.size_band} · documented SOC tier {d.entity.documented_soc_tier ?? "n/a"} · period {d.period}
+                <h1 className="text-3xl font-bold tracking-tight text-text drop-shadow-sm">{d.entity.name}</h1>
+                <p className="text-sm text-muted font-medium mt-1 flex flex-wrap items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">{d.entity.entity_id}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">{d.entity.sector}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Size {d.entity.size_band}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Tier {d.entity.documented_soc_tier ?? "N/A"}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Period {d.period}</span>
                 </p>
               </div>
               <div className="flex gap-2">
@@ -77,8 +81,8 @@ export function EntityPage() {
                 title={
                   d.sri ? (
                     <div className="flex items-baseline gap-2">
-                      <h2 className="text-sm font-semibold">Supervisory Risk Indicator</h2>
-                      <span className="tabular text-num font-semibold">{fmt1(d.sri.sri)}</span>
+                      <h2 className="text-base font-semibold text-muted">Supervisory Risk Indicator</h2>
+                      <span className="tabular text-4xl font-extrabold tracking-tighter text-text drop-shadow-sm">{fmt1(d.sri.sri)}</span>
                       <RiskBadge band={d.sri.band} />
                       <span className="text-xs text-muted">confidence {fmt2(d.sri.confidence)}</span>
                     </div>

@@ -24,8 +24,8 @@ export function PortfolioPage() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h1 className="text-xl font-semibold">Portfolio overview</h1>
-          <p className="text-sm text-muted">Entities requiring supervisory attention, ranked by expected cost of missing a weakness.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-accent to-uncertain bg-clip-text text-transparent drop-shadow-sm pb-1">Portfolio Overview</h1>
+          <p className="text-base text-muted font-medium mt-1">Entities requiring supervisory attention, ranked by expected cost of missing a weakness.</p>
         </div>
         <FilterBar>
           <SectorPicker />

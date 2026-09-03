@@ -20,11 +20,15 @@ export function AppShell() {
   const lastRun = status.data?.last_run;
 
   return (
-    <div className="flex h-full">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-toast focus:bg-bg focus:p-2">
+    <div className="flex h-full bg-bg relative overflow-hidden text-text selection:bg-accent selection:text-white">
+      {/* Ambient background glows */}
+      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-accent/20 rounded-full filter blur-[100px] opacity-60 animate-pulse-slow pointer-events-none z-0" />
+      <div className="absolute top-[60%] -right-[10%] w-[60%] h-[60%] bg-uncertain/20 rounded-full filter blur-[120px] opacity-40 pointer-events-none z-0" />
+      
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-toast focus:bg-surface focus:p-2">
         Skip to content
       </a>
-      <nav aria-label="Primary" className={cn("flex shrink-0 flex-col border-r border-border bg-surface transition-[width]", collapsed ? "w-[var(--nav-width-collapsed)]" : "w-[var(--nav-width)]")}>
+      <nav aria-label="Primary" className={cn("relative z-nav flex shrink-0 flex-col border-r border-border bg-surface backdrop-blur-xl transition-[width]", collapsed ? "w-[var(--nav-width-collapsed)]" : "w-[var(--nav-width)]")}>
         <div className="flex h-[var(--topbar-height)] items-center justify-between px-3">
           {!collapsed && (
             <span className="font-semibold tracking-tight" title="Supervisory Analytics Tool for SOC Assessment">
@@ -55,8 +59,8 @@ export function AppShell() {
         )}
       </nav>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border px-4">
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
+        <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border bg-surface/50 backdrop-blur-xl px-4 z-sticky sticky top-0">
           <PeriodPicker />
           <span className="flex items-center gap-3">
             <HelpButton />
@@ -66,7 +70,7 @@ export function AppShell() {
             </NavLink>
           </span>
         </header>
-        <main id="main" className="min-w-0 flex-1 overflow-auto p-4">
+        <main id="main" className="min-w-0 flex-1 overflow-auto p-6 z-10 animate-fade-in relative">
           <Outlet />
         </main>
       </div>

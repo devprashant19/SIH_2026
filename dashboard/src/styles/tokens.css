@@ -4,83 +4,89 @@
    - uncertain: findings inside the cost-sensitive uncertainty band (outline + hatch + "?")
    - greys: peers, medians, axes, chrome */
 :root {
-  --color-bg: #ffffff;
-  --color-surface: #f7f8fa;
-  --color-border: #e3e6ea;
-  --color-text: #1b1f24;
-  --color-text-muted: #5c6470;
+  --color-bg: #f8fafc;
+  --color-surface: rgba(255, 255, 255, 0.75);
+  --color-border: rgba(226, 232, 240, 0.8);
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
 
-  --color-accent: #2f5bea;
-  --color-accent-bg: #eaf0ff;
+  --color-accent: #3b82f6;
+  --color-accent-bg: rgba(59, 130, 246, 0.12);
 
-  --color-risk-critical: #8e1b1b;
-  --color-risk-critical-bg: #f9e3e3;
-  --color-risk-high: #c62828;
-  --color-risk-high-bg: #fdecec;
-  --color-risk-elevated: #b26a00;
-  --color-risk-elevated-bg: #fff4e0;
-  --color-risk-low: #2e7d32;
-  --color-risk-low-bg: #e9f5ea;
-  --color-risk-none: #6b7280;
-  --color-risk-none-bg: #f1f2f4;
+  --color-risk-critical: #ef4444;
+  --color-risk-critical-bg: rgba(239, 68, 68, 0.12);
+  --color-risk-high: #f97316;
+  --color-risk-high-bg: rgba(249, 115, 22, 0.12);
+  --color-risk-elevated: #f59e0b;
+  --color-risk-elevated-bg: rgba(245, 158, 11, 0.12);
+  --color-risk-low: #10b981;
+  --color-risk-low-bg: rgba(16, 185, 129, 0.12);
+  --color-risk-none: #94a3b8;
+  --color-risk-none-bg: rgba(148, 163, 184, 0.12);
 
-  --color-uncertain: #6d28d9;
-  --color-uncertain-bg: #f1ebff;
+  --color-uncertain: #8b5cf6;
+  --color-uncertain-bg: rgba(139, 92, 246, 0.12);
 
-  --color-cat-1: #2f5bea;
-  --color-cat-2: #0f766e;
-  --color-cat-3: #475569;
-  --color-cat-4: #92400e;
-  --color-cat-5: #4d7c0f;
-  --color-cat-6: #6b21a8;
+  --color-cat-1: #3b82f6;
+  --color-cat-2: #14b8a6;
+  --color-cat-3: #64748b;
+  --color-cat-4: #ea580c;
+  --color-cat-5: #65a30d;
+  --color-cat-6: #9333ea;
 
-  --nav-width: 220px;
-  --nav-width-collapsed: 56px;
-  --topbar-height: 48px;
+  --nav-width: 250px;
+  --nav-width-collapsed: 64px;
+  --topbar-height: 56px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #121417;
-    --color-surface: #1a1d21;
-    --color-border: #2a2f36;
-    --color-text: #e6e8eb;
-    --color-text-muted: #9aa3ad;
-    --color-accent: #7b9cff;
-    --color-accent-bg: #1c2540;
-    --color-risk-critical: #ff8a8a;
-    --color-risk-critical-bg: #3a1a1a;
-    --color-risk-high: #ff6b6b;
-    --color-risk-high-bg: #351b1b;
-    --color-risk-elevated: #f0b35a;
-    --color-risk-elevated-bg: #33270f;
-    --color-risk-low: #7fd18a;
-    --color-risk-low-bg: #16301a;
-    --color-risk-none: #9aa3ad;
-    --color-risk-none-bg: #23272d;
-    --color-uncertain: #b794f6;
-    --color-uncertain-bg: #2a1f45;
+    --color-bg: #020617;
+    --color-surface: rgba(15, 23, 42, 0.65);
+    --color-border: rgba(30, 41, 59, 0.8);
+    --color-text: #f8fafc;
+    --color-text-muted: #94a3b8;
+    
+    --color-accent: #38bdf8;
+    --color-accent-bg: rgba(56, 189, 248, 0.15);
+    
+    --color-risk-critical: #f87171;
+    --color-risk-critical-bg: rgba(248, 113, 113, 0.15);
+    --color-risk-high: #fb923c;
+    --color-risk-high-bg: rgba(251, 146, 60, 0.15);
+    --color-risk-elevated: #fcd34d;
+    --color-risk-elevated-bg: rgba(252, 211, 77, 0.15);
+    --color-risk-low: #34d399;
+    --color-risk-low-bg: rgba(52, 211, 153, 0.15);
+    --color-risk-none: #64748b;
+    --color-risk-none-bg: rgba(100, 116, 139, 0.15);
+    
+    --color-uncertain: #a78bfa;
+    --color-uncertain-bg: rgba(167, 139, 250, 0.15);
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #121417;
-  --color-surface: #1a1d21;
-  --color-border: #2a2f36;
-  --color-text: #e6e8eb;
-  --color-text-muted: #9aa3ad;
-  --color-accent: #7b9cff;
-  --color-accent-bg: #1c2540;
-  --color-risk-critical: #ff8a8a;
-  --color-risk-critical-bg: #3a1a1a;
-  --color-risk-high: #ff6b6b;
-  --color-risk-high-bg: #351b1b;
-  --color-risk-elevated: #f0b35a;
-  --color-risk-elevated-bg: #33270f;
-  --color-risk-low: #7fd18a;
-  --color-risk-low-bg: #16301a;
-  --color-risk-none: #9aa3ad;
-  --color-risk-none-bg: #23272d;
-  --color-uncertain: #b794f6;
-  --color-uncertain-bg: #2a1f45;
+  --color-bg: #020617;
+  --color-surface: rgba(15, 23, 42, 0.65);
+  --color-border: rgba(30, 41, 59, 0.8);
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+  
+  --color-accent: #38bdf8;
+  --color-accent-bg: rgba(56, 189, 248, 0.15);
+  
+  --color-risk-critical: #f87171;
+  --color-risk-critical-bg: rgba(248, 113, 113, 0.15);
+  --color-risk-high: #fb923c;
+  --color-risk-high-bg: rgba(251, 146, 60, 0.15);
+  --color-risk-elevated: #fcd34d;
+  --color-risk-elevated-bg: rgba(252, 211, 77, 0.15);
+  --color-risk-low: #34d399;
+  --color-risk-low-bg: rgba(52, 211, 153, 0.15);
+  --color-risk-none: #64748b;
+  --color-risk-none-bg: rgba(100, 116, 139, 0.15);
+  
+  --color-uncertain: #a78bfa;
+  --color-uncertain-bg: rgba(167, 139, 250, 0.15);
 }
