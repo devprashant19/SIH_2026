@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "composite": true,
+    // Without an outDir, `tsc -b` emits tailwind.config.js beside tailwind.config.ts, and
+    // Tailwind resolves the .js first — so every edit to the .ts is silently ignored.
+    "outDir": "./.tsbuild",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,

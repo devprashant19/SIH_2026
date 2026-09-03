@@ -33,12 +33,10 @@ wheels/
 dashboard/node_modules/
 dashboard/dist/
 dashboard/.vite/
-# tsc -b output for the composite config project
+# tsc -b output for the composite config project. It used to land beside the sources,
+# where tailwind.config.js shadowed tailwind.config.ts; tsconfig.node.json now sets outDir.
 dashboard/*.tsbuildinfo
-dashboard/vite.config.js
-dashboard/vite.config.d.ts
-dashboard/tailwind.config.js
-dashboard/tailwind.config.d.ts
+dashboard/.tsbuild/
 
 # OS / editor
 .DS_Store
