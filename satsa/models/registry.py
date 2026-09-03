@@ -40,7 +40,15 @@ def register(conn: duckdb.DuckDBPyConnection, settings: Settings, *, name: str, 
              run_id: str | None, periods: list[str], rows: int, data_hash: str, hyperparams: dict, metrics: dict,
              parent: str | None = None, feedback_count: int = 0, promote: bool = False) -> None:
     if promote:
-        conn.execute("UPDATE model_registry SET is_active = FALSE, superseded_by = ? WHERE model_name = ? AND is_active = TRUE", [version, name])
+        conn.execute("UPDATE model_registry SET is_active = FALSE, superseded_by = ? WHERE model_name = ? AND is_active = TRUE AND version <> ?", [version, name, version])
+    # The version is a hash of the training data, configuration and seed, so retraining on
+    # unchanged inputs legitimately produces the same version. That is the same model, not a
+    # collision, so re-registering it activates it rather than failing on the primary key.
+    exists = conn.execute("SELECT 1 FROM model_registry WHERE model_name = ? AND version = ?", [name, version]).fetchone()
+    if exists:
+        conn.execute("UPDATE model_registry SET is_active = ?, superseded_by = NULL WHERE model_name = ? AND version = ?", [promote, name, version])
+        write_registry_mirror(conn, settings)
+        return
     libs = json.loads((path.parent / "meta.json").read_text(encoding="utf-8")).get("library_versions", {})
     conn.execute(
         """INSERT INTO model_registry (model_name, version, path, artifact_hash, is_active, trained_at, trained_by_run_id, training_periods,

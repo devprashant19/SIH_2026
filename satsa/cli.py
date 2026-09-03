@@ -6,6 +6,9 @@
   satsa ingest        ingest a file or directory of submissions
   satsa run           run the analytics pipeline for a period
   satsa train         train and register models
+  satsa demo          narrated twelve-minute walkthrough
+  satsa showcase      execute and prove every capability
+  satsa serve         start the API and dashboard
   satsa verify-audit  recompute the audit hash chain
 """
 
@@ -212,6 +215,45 @@ def demo(
     finally:
         db.close()
     typer.echo("\nStart the dashboard with `satsa serve` and open http://localhost:8000 to follow the same path in the UI.")
+
+
+@app.command()
+def showcase(
+    period: str | None = typer.Option(None, help="Period to demonstrate against (default: the latest scored one)"),
+    rebuild: bool = typer.Option(False, help="Rebuild the estate first if there is nothing scored"),
+    ui: bool = typer.Option(False, "--ui", help="Also render every dashboard route in a browser; needs `satsa serve` running"),
+    config_dir: Path | None = typer.Option(None, help="Config directory (default: ./config)"),
+) -> None:
+    """Demonstrate every capability and prove each one, exiting non-zero if any fails."""
+    from satsa.db.connection import Database
+    from satsa.db.migrate import apply_schema
+    from satsa.showcase import run_showcase
+
+    settings = load_settings(config_dir)
+    try:
+        db = Database(settings.db_path)
+    except Exception as exc:  # DuckDB allows one writing process per file
+        if "another process" in str(exc):
+            typer.echo("The database is open for writing by another process, most likely `satsa serve`.")
+            typer.echo("DuckDB allows one writer per file. Stop the server and run this again.")
+            raise typer.Exit(code=1) from exc
+        raise
+    try:
+        with db.write() as conn:
+            apply_schema(conn)
+            scored = conn.execute("SELECT count(*) FROM sri_scores").fetchone()[0]
+        if not scored:
+            if not rebuild:
+                typer.echo("Nothing has been scored yet. Run `satsa demo`, or pass --rebuild.")
+                raise typer.Exit(code=1)
+            from satsa.demo import run_demo
+
+            run_demo(settings, db, echo=lambda _s: None)
+        result = run_showcase(settings, db, echo=typer.echo, period=period, with_ui=ui)
+    finally:
+        db.close()
+    if not result.ok:
+        raise typer.Exit(code=1)
 
 
 @app.command()

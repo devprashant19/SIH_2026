@@ -60,6 +60,19 @@ docker compose up
 | http://localhost:8000/api/docs | API reference |
 | http://localhost:8000/api/v1/health | Active models, code hash, config hash |
 
+To prove every capability rather than read about it:
+
+```bash
+.venv/Scripts/satsa showcase       # 79 checks across 16 sections, exits non-zero on failure
+.venv/Scripts/satsa showcase --ui  # also renders every dashboard route in a browser
+```
+
+`satsa demo` tells the twelve-minute story. `satsa showcase` executes every claim this
+README makes: it tampers with a copy of the audit ledger to show the break being caught,
+re-runs the pipeline to show identical inputs producing an identical output hash, records
+two conflicting supervisor decisions to show both being kept, and previews a threshold
+change before saving it. Nothing in its output is printed without being executed first.
+
 `make help` lists every target. `make check` runs ruff and the 70 backend tests.
 
 ### Optional accelerators
