@@ -62,11 +62,11 @@ export function EntityPage() {
                 </nav>
                 <h1 className="text-3xl font-bold tracking-tight text-text drop-shadow-sm">{d.entity.name}</h1>
                 <p className="text-sm text-muted font-medium mt-1 flex flex-wrap items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">{d.entity.entity_id}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">{d.entity.sector}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Size {d.entity.size_band}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Tier {d.entity.documented_soc_tier ?? "N/A"}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border/50 shadow-sm">Period {d.period}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border shadow-sm">{d.entity.entity_id}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border shadow-sm">{d.entity.sector}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border shadow-sm">Size {d.entity.size_band}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border shadow-sm">Tier {d.entity.documented_soc_tier ?? "N/A"}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface border border-border shadow-sm">Period {d.period}</span>
                 </p>
               </div>
               <div className="flex gap-2">

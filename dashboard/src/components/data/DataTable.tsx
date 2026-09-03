@@ -28,7 +28,7 @@ export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "
     <div className="overflow-x-auto" data-guide={tableGuide}>
       <table className="w-full min-w-full text-sm">
         {caption && <caption className="mb-2 text-left text-xs text-muted">{caption}</caption>}
-        <thead className="sticky top-0 z-10 bg-surface/80 backdrop-blur-md shadow-sm">
+        <thead className="sticky top-0 z-10 bg-surface backdrop-blur-md shadow-sm">
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
               {hg.headers.map((h) => {
@@ -38,7 +38,7 @@ export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "
                     key={h.id}
                     scope="col"
                     aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
-                    className="whitespace-nowrap border-b border-border/50 px-3 py-2.5 text-left font-medium text-muted transition-colors hover:text-text"
+                    className="whitespace-nowrap border-b border-border px-3 py-2.5 text-left font-medium text-muted transition-colors hover:text-text"
                   >
                     {h.isPlaceholder ? null : h.column.getCanSort() ? (
                       <button type="button" className="inline-flex items-center gap-1 hover:text-accent" onClick={h.column.getToggleSortingHandler()}>
@@ -63,7 +63,7 @@ export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "
               tabIndex={onRowClick ? 0 : undefined}
               onKeyDown={onRowClick ? (e) => e.key === "Enter" && onRowClick(row.original) : undefined}
               className={cn(
-                "border-b border-border/30 transition-colors duration-150 group",
+                "border-b border-border transition-colors duration-150 group",
                 dense ? "[&>td]:px-3 [&>td]:py-2" : "[&>td]:px-4 [&>td]:py-3",
                 onRowClick && "cursor-pointer hover:bg-accent-bg/50 hover:shadow-sm relative z-0",
                 isRowActive?.(row.original) && "bg-accent-bg/40 font-medium",

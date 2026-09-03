@@ -157,7 +157,7 @@ export function GuidePopover({
                 key={i}
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-200",
-                  i === index ? "w-4 bg-accent" : i < index ? "w-1.5 bg-accent/50" : "w-1.5 bg-border",
+                  i === index ? "w-4 bg-accent" : i < index ? "w-1.5 bg-accent opacity-50" : "w-1.5 bg-border",
                 )}
               />
             ))}

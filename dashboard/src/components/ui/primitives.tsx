@@ -4,10 +4,10 @@ import { useUiStore } from "@/state/uiStore";
 
 export function Button({ variant = "default", className, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "primary" | "ghost" | "danger" }) {
   const styles = {
-    default: "border border-border/60 bg-surface/80 backdrop-blur hover:bg-surface hover:shadow-sm",
-    primary: "border border-accent bg-accent/90 text-white backdrop-blur hover:bg-accent hover:shadow-glow",
-    ghost: "border border-transparent hover:bg-surface/50",
-    danger: "border border-risk-high/50 text-risk-high bg-risk-high-bg/50 backdrop-blur hover:bg-risk-high-bg hover:shadow-sm",
+    default: "border border-border bg-surface backdrop-blur hover:bg-surface hover:shadow-sm",
+    primary: "border border-accent bg-accent-bg text-accent backdrop-blur hover:bg-accent hover:text-white hover:shadow-glow",
+    ghost: "border border-transparent hover:bg-surface",
+    danger: "border border-risk-high text-risk-high bg-risk-high-bg backdrop-blur hover:bg-risk-high-bg hover:shadow-sm",
   }[variant];
   return <button type="button" className={cn("rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed", styles, className)} {...props} />;
 }
@@ -22,9 +22,9 @@ export function Select({ className, children, ...props }: SelectHTMLAttributes<H
 
 export function Card({ title, actions, children, className, "data-guide": guideAnchor }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; "data-guide"?: string }) {
   return (
-    <section className={cn("card p-4 rounded-xl bg-surface/60 backdrop-blur-md shadow-surface transition-all duration-300 hover:shadow-glow hover:-translate-y-1 border border-border/50 relative overflow-hidden", className)} data-guide={guideAnchor}>
+    <section className={cn("card p-4 rounded-xl bg-surface backdrop-blur-md shadow-surface transition-all duration-300 hover:shadow-glow hover:-translate-y-1 border border-border relative overflow-hidden", className)} data-guide={guideAnchor}>
       {(title || actions) && (
-        <header className="mb-3 flex items-baseline justify-between gap-2 border-b border-border/20 pb-2">
+        <header className="mb-3 flex items-baseline justify-between gap-2 border-b border-border pb-2">
           {typeof title === "string" ? <h2 className="text-base font-semibold tracking-tight">{title}</h2> : title}
           {actions}
         </header>

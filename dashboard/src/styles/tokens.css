@@ -4,11 +4,11 @@
    - uncertain: findings inside the cost-sensitive uncertainty band (outline + hatch + "?")
    - greys: peers, medians, axes, chrome */
 :root {
-  --color-bg: #f8fafc;
-  --color-surface: rgba(255, 255, 255, 0.75);
-  --color-border: rgba(226, 232, 240, 0.8);
+  --color-bg: #f1f5f9;
+  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-border: rgba(203, 213, 225, 0.8);
   --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-text-muted: #475569;
 
   --color-accent: #3b82f6;
   --color-accent-bg: rgba(59, 130, 246, 0.12);

@@ -34,8 +34,8 @@ export function AppShell() {
   return (
     <div className="flex h-full bg-bg relative overflow-hidden text-text selection:bg-accent selection:text-white">
       {/* Ambient background glows */}
-      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-accent/20 rounded-full filter blur-[100px] opacity-60 animate-pulse-slow pointer-events-none z-0" />
-      <div className="absolute top-[60%] -right-[10%] w-[60%] h-[60%] bg-uncertain/20 rounded-full filter blur-[120px] opacity-40 pointer-events-none z-0" />
+      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-accent-bg rounded-full filter blur-[100px] opacity-60 animate-pulse-slow pointer-events-none z-0" />
+      <div className="absolute top-[60%] -right-[10%] w-[60%] h-[60%] bg-uncertain-bg rounded-full filter blur-[120px] opacity-40 pointer-events-none z-0" />
       
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-toast focus:bg-surface focus:p-2">
         Skip to content
@@ -72,7 +72,7 @@ export function AppShell() {
       </nav>
 
       <div className="relative z-10 flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border bg-surface/50 backdrop-blur-xl px-4 z-sticky sticky top-0">
+        <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border bg-surface backdrop-blur-xl px-4 z-sticky sticky top-0">
           <PeriodPicker />
           <span className="flex items-center gap-3">
             <ThemeToggle />
