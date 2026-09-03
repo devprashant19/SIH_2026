@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { NavLink, Outlet, useSearchParams } from "react-router-dom";
 import { useHealth, usePipelineStatus } from "@/api/hooks";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { PeriodPicker } from "@/components/data/Pickers";
 import { Toasts } from "@/components/ui/primitives";
 import { HelpButton } from "@/guide/components/HelpDrawer";
@@ -18,6 +20,16 @@ export function AppShell() {
   const status = usePipelineStatus();
   const search = params.toString() ? `?${params.toString()}` : "";
   const lastRun = status.data?.last_run;
+  const theme = useUiStore((s) => s.theme);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "system") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.setAttribute("data-theme", theme);
+    }
+  }, [theme]);
 
   return (
     <div className="flex h-full bg-bg relative overflow-hidden text-text selection:bg-accent selection:text-white">
@@ -63,6 +75,7 @@ export function AppShell() {
         <header className="flex h-[var(--topbar-height)] shrink-0 items-center justify-between gap-3 border-b border-border bg-surface/50 backdrop-blur-xl px-4 z-sticky sticky top-0">
           <PeriodPicker />
           <span className="flex items-center gap-3">
+            <ThemeToggle />
             <HelpButton />
             <NavLink to={{ pathname: "/audit", search }} className="text-xs text-muted hover:text-accent" title="Provenance of the current results" data-guide="global.provenance">
             {health.data ? `v${health.data.app_version} · code ${shortHash(health.data.code_hash)} · config ${shortHash(health.data.config_hash)}` : "loading…"}
