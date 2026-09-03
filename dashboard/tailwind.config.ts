@@ -50,6 +50,17 @@ export default {
       },
       borderRadius: { sm: "4px", md: "6px" },
       boxShadow: { drawer: "0 4px 16px rgba(0,0,0,0.08)" },
+      // One named stacking order for every overlay in the app. The guide layers sit above
+      // the drawer and the toasts so a tour can spotlight a control inside an open drawer.
+      zIndex: {
+        nav: "10",
+        sticky: "20",
+        drawer: "40",
+        toast: "50",
+        "guide-scrim": "60",
+        "guide-ring": "61",
+        "guide-popover": "62",
+      },
     },
   },
   plugins: [],

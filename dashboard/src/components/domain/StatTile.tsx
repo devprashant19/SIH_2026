@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/cn";
 
-export function StatTile({ label, value, delta, hint, to, tone = "neutral" }: { label: string; value: string | number; delta?: number | null; hint?: string; to?: string; tone?: "neutral" | "risk" | "uncertain" }) {
+export function StatTile({ label, value, delta, hint, to, tone = "neutral", "data-guide": guideAnchor }: { label: string; value: string | number; delta?: number | null; hint?: string; to?: string; tone?: "neutral" | "risk" | "uncertain"; "data-guide"?: string }) {
   const body = (
     <>
       <div className="text-xs text-muted">{label}</div>
@@ -15,10 +15,12 @@ export function StatTile({ label, value, delta, hint, to, tone = "neutral" }: { 
     </>
   );
   return to ? (
-    <Link to={to} className="card block p-3 hover:border-accent">
+    <Link to={to} className="card block p-3 hover:border-accent" data-guide={guideAnchor}>
       {body}
     </Link>
   ) : (
-    <div className="card p-3">{body}</div>
+    <div className="card p-3" data-guide={guideAnchor}>
+      {body}
+    </div>
   );
 }

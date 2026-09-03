@@ -19,7 +19,7 @@ export function AppShell() {
 
   return (
     <div className="flex h-full">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:bg-bg focus:p-2">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-toast focus:bg-bg focus:p-2">
         Skip to content
       </a>
       <nav aria-label="Primary" className={cn("flex shrink-0 flex-col border-r border-border bg-surface transition-[width]", collapsed ? "w-[var(--nav-width-collapsed)]" : "w-[var(--nav-width)]")}>

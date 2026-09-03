@@ -14,14 +14,18 @@ interface Props<T> {
   dense?: boolean;
   isRowActive?: (row: T) => boolean;
   caption?: ReactNode;
+  /** Guide anchor for the table as a whole. */
+  tableGuide?: string;
+  /** Guide anchor applied to the first rendered row only, so "click the top row" is anchorable. */
+  firstRowGuide?: string;
 }
 
-export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "Nothing to show", emptyHint, initialSort = [], dense = true, isRowActive, caption }: Props<T>) {
+export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "Nothing to show", emptyHint, initialSort = [], dense = true, isRowActive, caption, tableGuide, firstRowGuide }: Props<T>) {
   const [sorting, setSorting] = useState<SortingState>(initialSort);
   const table = useReactTable({ data, columns, state: { sorting }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel() });
   if (!data.length) return <EmptyState title={emptyTitle} hint={emptyHint} />;
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" data-guide={tableGuide}>
       <table className="w-full min-w-full text-sm">
         {caption && <caption className="mb-2 text-left text-xs text-muted">{caption}</caption>}
         <thead>
@@ -51,9 +55,10 @@ export function DataTable<T>({ data, columns, onRowClick, rowKey, emptyTitle = "
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row, i) => (
             <tr
               key={rowKey ? rowKey(row.original) : row.id}
+              data-guide={i === 0 ? firstRowGuide : undefined}
               onClick={onRowClick ? () => onRowClick(row.original) : undefined}
               tabIndex={onRowClick ? 0 : undefined}
               onKeyDown={onRowClick ? (e) => e.key === "Enter" && onRowClick(row.original) : undefined}

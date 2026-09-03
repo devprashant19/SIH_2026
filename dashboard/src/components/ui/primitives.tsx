@@ -20,9 +20,9 @@ export function Select({ className, children, ...props }: SelectHTMLAttributes<H
   );
 }
 
-export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
+export function Card({ title, actions, children, className, "data-guide": guideAnchor }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; "data-guide"?: string }) {
   return (
-    <section className={cn("card p-3", className)}>
+    <section className={cn("card p-3", className)} data-guide={guideAnchor}>
       {(title || actions) && (
         <header className="mb-2 flex items-baseline justify-between gap-2">
           {typeof title === "string" ? <h2 className="text-sm font-semibold">{title}</h2> : title}
@@ -87,11 +87,20 @@ export function Toasts() {
   }, [toasts, dismiss]);
   if (!toasts.length) return null;
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2" aria-live="polite">
+    <div className="fixed bottom-4 right-4 z-toast flex flex-col gap-2" aria-live="polite">
       {toasts.map((t) => (
-        <div key={t.id} className={cn("rounded-md border px-3 py-2 text-sm shadow-drawer", t.tone === "error" ? "border-risk-high bg-risk-high-bg text-risk-high" : "border-border bg-bg")}>
+        <button
+          key={t.id}
+          type="button"
+          onClick={() => dismiss(t.id)}
+          title="Dismiss"
+          className={cn(
+            "cursor-pointer rounded-md border px-3 py-2 text-left text-sm shadow-drawer",
+            t.tone === "error" ? "border-risk-high bg-risk-high-bg text-risk-high" : "border-border bg-bg",
+          )}
+        >
           {t.text}
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -103,12 +112,17 @@ export function Drawer({ open, onClose, title, children, width = "max-w-xl" }: {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
-    ref.current?.focus();
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+  // Focus is claimed once per open. Keeping it out of the effect above matters because most
+  // call sites pass an inline arrow for onClose, so that effect re-runs on every render and
+  // would otherwise steal focus back from whatever the user tabbed to inside the panel.
+  useEffect(() => {
+    if (open) ref.current?.focus();
+  }, [open]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/20" onClick={onClose}>
+    <div className="fixed inset-0 z-drawer flex justify-end bg-black/20" onClick={onClose}>
       <div
         ref={ref}
         tabIndex={-1}
@@ -129,7 +143,7 @@ export function Drawer({ open, onClose, title, children, width = "max-w-xl" }: {
   );
 }
 
-export function Tabs({ tabs, active, onChange }: { tabs: { key: string; label: ReactNode }[]; active: string; onChange: (k: string) => void }) {
+export function Tabs({ tabs, active, onChange }: { tabs: { key: string; label: ReactNode; guide?: string }[]; active: string; onChange: (k: string) => void }) {
   return (
     <div role="tablist" className="flex gap-1 border-b border-border">
       {tabs.map((t) => (
@@ -137,6 +151,7 @@ export function Tabs({ tabs, active, onChange }: { tabs: { key: string; label: R
           key={t.key}
           role="tab"
           type="button"
+          data-guide={t.guide}
           aria-selected={active === t.key}
           onClick={() => onChange(t.key)}
           className={cn("-mb-px border-b-2 px-3 py-1.5 text-sm", active === t.key ? "border-accent font-medium text-accent" : "border-transparent text-muted hover:text-text")}
