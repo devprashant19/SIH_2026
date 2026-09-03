@@ -18,10 +18,21 @@ export function EntityPage() {
   const { entityId = "" } = useParams();
   const [period] = usePeriodParam();
   const [dimension, setDimension] = useSearchParamState("dimension", "");
+  const [capability] = useSearchParamState("capability", "");
+  const [decision] = useSearchParamState("decision", "");
+  const [status] = useSearchParamState("status", "");
   const [benchFeature] = useSearchParamState("metric", "note_template_score");
   const p = periodOrUndefined(period);
   const entity = useEntity(entityId, p);
-  const findings = useFindings({ period: p, entity_id: entityId, dimension: dimension || undefined, limit: 200 });
+  const findings = useFindings({
+    period: p,
+    entity_id: entityId,
+    dimension: dimension || undefined,
+    capability: capability || undefined,
+    decision: decision || undefined,
+    status: status || undefined,
+    limit: 200,
+  });
   const trend = useTrendEntity(entityId);
   const bench = useBenchmark(benchFeature || "note_template_score", p, entityId);
   const pushToast = useUiStore((s) => s.pushToast);
@@ -224,7 +235,7 @@ export function EntityPage() {
             )}
 
             <Card
-              title={`Findings${dimension ? ` · ${DIMENSION_LABELS[dimension as SriDimension] ?? dimension}` : ""}`}
+              title={`Findings${dimension ? ` · ${DIMENSION_LABELS[dimension as SriDimension] ?? dimension}` : capability ? ` · ${capability}` : ""}`}
               actions={
                 <FilterBar>
                   <FilterSelect label="Dimension" param="dimension" options={Object.entries(DIMENSION_LABELS).map(([value, label]) => ({ value, label }))} />
