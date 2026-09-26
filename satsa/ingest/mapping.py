@@ -18,10 +18,8 @@ from satsa.schema.enums import (
     AnalystAction,
     AssetClass,
     Category,
-    ClosureReason,
     Criticality,
     Sector,
-    Severity,
     SizeBand,
     normalise,
 )

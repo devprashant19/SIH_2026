@@ -10,7 +10,15 @@ from scipy.stats import spearmanr
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 
-from satsa.features.base import INVESTIGATED_RANK, EntityContext, FeatureMeta, FeatureValue, action_rank, fv, rate
+from satsa.features.base import (
+    INVESTIGATED_RANK,
+    EntityContext,
+    FeatureMeta,
+    FeatureValue,
+    action_rank,
+    fv,
+    rate,
+)
 
 META: list[FeatureMeta] = [
     FeatureMeta("note_missing_rate", "Missing investigation notes", "notes", "n(note null or < 10 chars | action >= INVESTIGATED) / n(action >= INVESTIGATED)", 20, True, headline=True),

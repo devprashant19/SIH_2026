@@ -64,7 +64,7 @@ class EntityAnomalyEnsemble:
     def _X(self, frame: pd.DataFrame) -> np.ndarray:
         return frame.reindex(columns=self.feature_names).astype(float).values
 
-    def fit(self, frame: pd.DataFrame, clean_mask: np.ndarray | None = None) -> "EntityAnomalyEnsemble":
+    def fit(self, frame: pd.DataFrame, clean_mask: np.ndarray | None = None) -> EntityAnomalyEnsemble:
         X = self._X(frame)
         n = len(X)
         self.n_train = n
@@ -141,7 +141,7 @@ class AlertAnomalyModel:
     hi: float = 1.0
     n_train: int = 0
 
-    def fit(self, f: pd.DataFrame, max_rows: int = 50_000) -> "AlertAnomalyModel":
+    def fit(self, f: pd.DataFrame, max_rows: int = 50_000) -> AlertAnomalyModel:
         if len(f) > max_rows:
             f = f.sample(n=max_rows, random_state=self.seed)
         self.preprocessor = Pipeline([("impute", SimpleImputer(strategy="median")), ("quantile", QuantileTransformer(output_distribution="normal", n_quantiles=min(len(f), 200), random_state=self.seed))])

@@ -25,7 +25,7 @@ class Calibrator:
     brier: float | None = None
     reliability: list[dict] = field(default_factory=list)
 
-    def fit(self, scores: np.ndarray, labels: np.ndarray) -> "Calibrator":
+    def fit(self, scores: np.ndarray, labels: np.ndarray) -> Calibrator:
         scores, labels = np.asarray(scores, dtype=float), np.asarray(labels, dtype=float)
         mask = ~np.isnan(scores)
         scores, labels = scores[mask], labels[mask]

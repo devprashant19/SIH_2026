@@ -10,9 +10,10 @@ chain. Every number printed comes from the database, not from the script.
 from __future__ import annotations
 
 import shutil
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from satsa.api import queries as q
 from satsa.audit.verify import verify_chain
@@ -163,7 +164,7 @@ def run_demo(
         emit(step, f"{detail['rule_id'] or 'combined'} · {detail['title']} · severity {detail['severity']}")
         emit(step, f"Rationale: {detail['rationale']}")
         emit(step, f"Decision {detail['decision']} because p = {_num(detail['p_final'])} against t* = {_num(detail['t_star'])} with an uncertainty band of {_num(detail['band_low'])} to {_num(detail['band_high'])}.")
-        emit(step, f"t* comes from the cost of being wrong: C_FP / (C_FP + C_FN). Missing a real weakness is costed higher, so the threshold sits low.")
+        emit(step, "t* comes from the cost of being wrong: C_FP / (C_FP + C_FN). Missing a real weakness is costed higher, so the threshold sits low.")
         if detail["evidence_features"]:
             emit(step, "Evidence against the peer group:")
             for f in detail["evidence_features"][:4]:

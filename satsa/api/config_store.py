@@ -12,7 +12,7 @@ import yaml
 from satsa.api.schemas import ConfigUpdate, WhatIfRequest
 from satsa.audit.audit_log import record_event
 from satsa.config import CONFIG_FILES, Settings, load_settings, reset_settings_cache
-from satsa.db.repo import fetch_df, fetch_one, to_json
+from satsa.db.repo import fetch_df, to_json
 
 
 def effective_config(settings: Settings) -> dict[str, Any]:

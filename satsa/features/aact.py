@@ -8,12 +8,20 @@ means the entity investigates that category less than everyone else.
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 import numpy as np
 import pandas as pd
 
-from datetime import timedelta
-
-from satsa.features.base import INVESTIGATED_RANK, EntityContext, FeatureMeta, FeatureValue, action_rank, fv, period_bounds
+from satsa.features.base import (
+    INVESTIGATED_RANK,
+    EntityContext,
+    FeatureMeta,
+    FeatureValue,
+    action_rank,
+    fv,
+    period_bounds,
+)
 
 META: list[FeatureMeta] = [
     FeatureMeta("aact_inv_gap_30_max", "Largest investigated-rate deficit (30d)", "aact", "max_cat (global_rate_30 - entity_rate_30), n_cat >= 10", 10, True, headline=True),

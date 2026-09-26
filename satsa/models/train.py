@@ -9,7 +9,12 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from satsa.analytics.anomaly import MODULE_A_FEATURES, AlertAnomalyModel, EntityAnomalyEnsemble, alert_feature_frame
+from satsa.analytics.anomaly import (
+    MODULE_A_FEATURES,
+    AlertAnomalyModel,
+    EntityAnomalyEnsemble,
+    alert_feature_frame,
+)
 from satsa.analytics.calibration import Calibrator
 from satsa.analytics.rules.base import RuleContext
 from satsa.analytics.rules.catalogue import build_catalogue, evaluate_all

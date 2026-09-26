@@ -19,7 +19,7 @@ from pathlib import Path
 import typer
 
 from satsa.config import load_settings
-from satsa.version import RULES_VERSION, FEATURE_VERSION, __version__, get_code_hash
+from satsa.version import FEATURE_VERSION, RULES_VERSION, __version__, get_code_hash
 
 app = typer.Typer(help="SAT-SA: Supervisory Analytics Tool for SOC Assessment", no_args_is_help=True)
 

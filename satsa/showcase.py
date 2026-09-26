@@ -16,9 +16,10 @@ import re
 import socket
 import tempfile
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import duckdb
 
@@ -114,7 +115,7 @@ def run_showcase(settings: Settings, db: Database, *, echo: Callable[[str], None
     echo("")
     echo("#" * WIDTH)
     echo(f"#  SAT-SA feature demonstration · period {period}")
-    echo(f"#  Every line below is executed, not asserted from documentation.")
+    echo("#  Every line below is executed, not asserted from documentation.")
     echo("#" * WIDTH)
 
     _ingestion(r, settings, db, period)

@@ -11,8 +11,8 @@ import pandas as pd
 
 from satsa.config import Settings
 from satsa.db.repo import fetch_df, fetch_one, latest_success_run_id
-from satsa.feedback.store import latest_decisions
 from satsa.features.registry import REGISTRY
+from satsa.feedback.store import latest_decisions
 
 DIMENSIONS = ["execution_gap", "negative_space", "escalation_discipline", "investigation_quality", "data_integrity", "trend_penalty"]
 
