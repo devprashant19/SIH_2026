@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import Enum, StrEnum
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
@@ -20,7 +20,7 @@ class Severity(str, Enum):
 SEVERITY_RANK = {Severity.CRITICAL: 4, Severity.HIGH: 3, Severity.MEDIUM: 2, Severity.LOW: 1, Severity.INFO: 0}
 
 
-class AnalystAction(str, Enum):
+class AnalystAction(StrEnum):
     NONE = "NONE"
     ACKNOWLEDGED = "ACKNOWLEDGED"
     INVESTIGATED = "INVESTIGATED"
@@ -43,7 +43,7 @@ ACTION_RANK = {
 INVESTIGATIVE_ACTIONS = {AnalystAction.INVESTIGATED, AnalystAction.ESCALATED}
 
 
-class ClosureReason(str, Enum):
+class ClosureReason(StrEnum):
     FALSE_POSITIVE = "FALSE_POSITIVE"
     BENIGN = "BENIGN"
     DUPLICATE = "DUPLICATE"
@@ -54,13 +54,13 @@ class ClosureReason(str, Enum):
     OTHER = "OTHER"
 
 
-class Criticality(str, Enum):
+class Criticality(StrEnum):
     TIER1 = "TIER1"  # most critical
     TIER2 = "TIER2"
     TIER3 = "TIER3"
 
 
-class AssetClass(str, Enum):
+class AssetClass(StrEnum):
     SCADA = "SCADA"
     HMI = "HMI"
     HISTORIAN = "HISTORIAN"
@@ -73,7 +73,7 @@ class AssetClass(str, Enum):
     OTHER = "OTHER"
 
 
-class Category(str, Enum):
+class Category(StrEnum):
     MALWARE = "malware"
     BRUTE_FORCE = "brute_force"
     LATERAL_MOVEMENT = "lateral_movement"
@@ -89,7 +89,7 @@ class Category(str, Enum):
     UNKNOWN = "unknown"
 
 
-class Sector(str, Enum):
+class Sector(StrEnum):
     POWER = "power"
     OIL_GAS = "oil_gas"
     TELECOM = "telecom"
@@ -99,7 +99,7 @@ class Sector(str, Enum):
     HEALTH = "health"
 
 
-class SizeBand(str, Enum):
+class SizeBand(StrEnum):
     S = "S"
     M = "M"
     L = "L"

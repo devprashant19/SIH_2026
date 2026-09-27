@@ -690,8 +690,8 @@ def _ui(r: Reporter, settings: Settings) -> None:
             for path in routes:
                 page = browser.new_page(viewport={"width": 1440, "height": 900})
                 errs: list[str] = []
-                page.on("pageerror", lambda e: errs.append(str(e)))
-                page.on("console", lambda m: errs.append(m.text) if m.type == "error" else None)
+                page.on("pageerror", lambda e, target=errs: target.append(str(e)))
+                page.on("console", lambda m, target=errs: target.append(m.text) if m.type == "error" else None)
                 page.goto(base + path, wait_until="networkidle", timeout=30000)
                 page.wait_for_timeout(900)
                 rows = page.locator("tbody tr").count()
