@@ -269,7 +269,7 @@ def _model(r: Reporter, settings: Settings, db: Database) -> None:
         rows = conn.execute("""SELECT model_name, version, training_rows, metrics_json, feature_list_hash
                                FROM model_registry WHERE is_active ORDER BY model_name""").fetchall()
     r.check(bundle.available, "active bundle loaded", f"{len(rows)} models")
-    for name, version, n, metrics_json, flh in rows:
+    for name, version, n, metrics_json, _flh in rows:
         m = json.loads(metrics_json)
         bits = []
         if "detectors" in m:
@@ -476,9 +476,9 @@ def _feedback(r: Reporter, settings: Settings, db: Database, period: str) -> Non
         return
     fid = f[0]
     with db.write() as conn:
-        first = record_feedback(conn, settings, target_type="finding", target_id=fid, decision="ACCEPT",
+        record_feedback(conn, settings, target_type="finding", target_id=fid, decision="ACCEPT",
                                 reviewer_id="showcase_examiner", note="Confirmed during the walkthrough.", source="cli")
-        second = record_feedback(conn, settings, target_type="finding", target_id=fid, decision="REJECT",
+        record_feedback(conn, settings, target_type="finding", target_id=fid, decision="REJECT",
                                  reviewer_id="showcase_reviewer", note="Second reviewer disagreed.", source="cli")
     with db.read() as conn:
         h = history(conn, fid)
